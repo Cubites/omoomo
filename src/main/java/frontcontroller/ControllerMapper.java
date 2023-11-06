@@ -4,10 +4,12 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import controller.Controller;
+import controller.CreateRoomController;
 import controller.EnterRoomController;
 import controller.HomeController;
 import controller.LoginController;
 import controller.RegisterController;
+import controller.UpdateRoomController;
 import controller.WroomController;
 
 public class ControllerMapper {
@@ -22,6 +24,8 @@ public class ControllerMapper {
 		mapper.put("/wroom.do", new WroomController());
 		mapper.put("/enterRoom.do", new EnterRoomController());
 		mapper.put("/login.do",new LoginController());
+		mapper.put("/createRoom.do", new CreateRoomController());
+        mapper.put("/updateRoom.do", new UpdateRoomController());
 	}
 	
 	public Controller getController(String url) {
