@@ -12,7 +12,7 @@
 			padding: 0;
 			box-sizing: border-box;
 		}
-		/* 전체 페이지 */
+		/* total page */
 		#container{
 			display: flex;
 			flex-direction: row;
@@ -21,7 +21,7 @@
 			height: 100vh;
 			min-height: 900px;
 		}
-		/* 게임 페이지 */
+		/** game area **/
 		#gamepage{
 			width: 80%;
 			height: 100%;
@@ -43,6 +43,7 @@
 			flex-direction: column;
 			justify-content: center;
 			align-items: center;
+			position: relative;
 		}
 		#boardfront{
 			width: 754px;
@@ -54,7 +55,50 @@
 			background-size: 754px 754px;
 			box-sizing: border-box;
 			border: 3px solid #000;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
 		}
+		/*** stone area ***/
+		#stoneboard{
+			width: 810px;
+			height: 810px;
+			background-color: transparent;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			position: absolute;
+			top: 0;
+			left: 0;
+		}
+		/**** stone design ****/
+		.rowStoneBox{
+			width: 100%;
+			height: 42px;
+			display: flex;
+			flex-direction: row;
+			justify-content: center;
+			align-items: center;
+		}
+		.stoneCell{
+			width: 42px;
+			height: 42px;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+		}
+		.stone{
+			width: 38px;
+			height: 38px;
+			border-radius: 19px;
+			background-color: #101010;
+			box-shadow: inset 4px 4px 5px rgba(255, 255, 255, .25), inset -4px -4px 5px rgba(0, 0, 0, .25);
+			cursor: pointer;
+			opacity: 0;
+		}
+		/*** stone bowl design ***/
 		.bowl{
 			width: 20%;
 			height: 100%;
@@ -81,7 +125,7 @@
 			border-radius: 120px;
 			box-shadow: inset 8px 8px 10px rgba(0, 0, 0, .25), inset -6px -6px 10px rgba(255, 255, 255, .25);
 		}
-		/* 채팅 페이지 */
+		/** chat area **/
 		#chatpage{
 			width: 20%;
 			height: 100%;
@@ -92,6 +136,7 @@
 			align-items: center;
 			padding: 10px;
 		}
+		/*** user list area ***/
 		#userlist{
 			width: 90%;
 			height: 10%;
@@ -99,12 +144,14 @@
 			border-radius: 10px;
 			font-size: 30px;
 		}
+		/*** chat message area ***/
 		#messagesTextArea{
 			width: 90%;
 			height: 80%;
 			border-radius: 10px;
 			padding: 10px;
 		}
+		/*** chat input area ***/
 		#inputbox{
 			display: flex;
 			flex-direction: row;
@@ -139,18 +186,24 @@
 		<div id="gamepage">
 			<div class="bowl" style="align-items: start;">
 				<div class="bowlImage" 
-					style=`background-color: #e8e8e8;`>
+					style="background-color: #e8e8e8;">
 					<div class="bowlImageInside" 
-						style=`background-color: #bbbbbb;`></div>
+						style="background-color: #bbbbbb;"></div>
 				</div>
 			</div>
 			<div id="boardback">
 				<div id="boardfront">
-					<c:forEach varStatus="" begin="0" end="18">
-						<c:forEach varStatus="j" begin="0" end="18">
-							
+					<div id="stoneboard">
+						<c:forEach var="i" begin="0" end="18">
+							<div class="rowStoneBox">
+								<c:forEach var="j" begin="0" end="18">
+									<div class="stoneCell">
+										<div class="stone" data-h="${i}" data-v="${j}"></div>
+									</div>
+								</c:forEach>
+							</div>
 						</c:forEach>
-					</c:forEach>
+					</div>
 				</div>
 			</div>
 			<div class="bowl" style="align-items: end;">
@@ -207,6 +260,24 @@
 			}
 			websocket.send(JSON.stringify(message)); // JSON 객체를 String으로 변환하여 전송
 		});
+
+		Array.from(document.getElementsByClassName("stone")).forEach((stone) => {
+			stone.addEventListener('click', (e) => {
+				console.log("h: " + e.target.dataset.h);
+				console.log("v: " + e.target.dataset.v);
+			});
+			stone.addEventListener('mouseenter', (e) => {
+				e.target.style.opacity = 0.5;
+			});
+			stone.addEventListener('mouseleave', (e) => {
+				if(e.target.style.opacity != 1){
+					e.target.style.opacity = 0;
+				}
+			});
+			stone.addEventListener('click', (e) => {
+				e.target.style.opacity = 1;
+			});
+		})
 	</script>
 </body>
 </html>

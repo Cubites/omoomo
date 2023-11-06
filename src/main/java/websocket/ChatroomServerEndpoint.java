@@ -2,7 +2,6 @@ package websocket;
 
 import java.io.StringWriter;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -21,10 +20,13 @@ import javax.websocket.server.ServerEndpoint;
 
 import org.json.JSONObject;
 
+import socket.SocketConnection;
+
 @ServerEndpoint(value="/chatroomServerEndpoint", configurator=ChatroomServerconfigurator.class)
 public class ChatroomServerEndpoint {
 	// String = 방 번호, Set = 방에 있는 유저 목록, Session = 유저
 	static Map<String, Set<Session>> roomNUsers = new HashMap<>();
+	static SocketConnection sc = new SocketConnection();
 	
 	@OnOpen
 	public void handleOpen(EndpointConfig endpointConfig, Session userSession) {
@@ -42,15 +44,17 @@ public class ChatroomServerEndpoint {
 			userSession.getUserProperties().put("stonecolor", "white");
 			roomNUsers.put((String) endpointConfig.getUserProperties().get("roomNumber"), new HashSet<Session>(Arrays.asList(userSession)));
 		}
+//		sc.enterRoom((String) endpointConfig.getUserProperties().get("roomNumber"), (Session) userSession);
 		
 		// 현재 소켓 접속자 현황 확인용 로그
 		System.out.println("[서버] 유저 입장");
 		System.out.println("===== 현재 방 현황 =====");
 		System.out.println("| 방 번호 | 현재 유저 수 |");
-		for(String room : roomNUsers.keySet()) {
-			System.out.println("---------------------");
-			System.out.println("| " + room + "번방 | " + roomNUsers.get(room).size() + "명 |");
-		}
+//		Map<String, Set<Session>> userSessions = sc.getUserSocketsMap();
+//		for(String roomName : userSessions.keySet()) {
+//			System.out.println("---------------------");
+//			System.out.println("| " + roomName + "번방 | " + userSessions.get(roomName).size() + "명 |");
+//		}
 		System.out.println("---------------------");
 	}
 	
@@ -64,13 +68,14 @@ public class ChatroomServerEndpoint {
 			System.out.println("요청 유형: " + reqMessage.get("sign"));
 			if("chat".equals(reqMessage.get("sign"))) {
 				// 받은 메시지가 채팅 메시지 인 경우 - 채팅 메시지를 같은 방내 다른 사용자에게 전송
-				roomNUsers.get(roomNumber).stream().forEach(x -> {
-					try{
-						x.getBasicRemote().sendText(buildJsonData(username, (String) reqMessage.get("m")));
-					} catch(Exception e) {
-						e.printStackTrace();
-					}
-				});
+//				roomNUsers.get(roomNumber).stream().forEach(x -> {
+//					try{
+//						x.getBasicRemote().sendText(buildJsonData(username, (String) reqMessage.get("m")));
+//					} catch(Exception e) {
+//						e.printStackTrace();
+//					}
+//				});
+				sc.sendMessage(roomNumber, username, message);
 			} else if("stone".equals(reqMessage.get("sign"))){
 				// 받은 메시지가 돌을 놓은 좌표인 경우 - 놓은 좌포를 같은 방내 다른 사용자에게 전송
 				
