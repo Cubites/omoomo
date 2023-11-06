@@ -77,7 +77,30 @@ public class ChatroomServerEndpoint {
 				// 전체(or 놓은 위치 주변) 오목판 정보를 받아 오목 판별
 				
 				/******** 여기에 오목 판별 로직 추가 ********/
+			    // stone color, stone location, stone area
+			    // stone xy: {x, y} = {horizon, vertical}
+			    /* 
+			     *  stone area = 
+			        {
+			            {{h: 0, v: 4}, {h: 0, v: 4}, {h: 0, v: 4}, ...},
+                        {{h: 0, v: 4}, {h: 0, v: 4}, {h: 0, v: 4}, ...},
+			            ...
+		            }
+		            stone location = {h: 0, v: 4}
+		            stone color = {color: "black" ? "white"}
+			     */
+			    // logic.win((Map) stone_color, (Map) stone_location, (List<ArrayList<HashMap<String, Integer>>) stone_area);
 				
+			    /*
+			     1. stone 5 ?
+			     2. Need stone 33 ?
+			         2-1. Yes! => check 33
+			         2-2. No! => pass
+			     3. stone 44 ?
+			         3-1. Yes! => check 44
+			         3-2. No! => pass
+			     */
+			    
 				// 판별 결과와 놓은 위치 값을 같은 방내 다른 사람에게 전송
 				
 				roomNUsers.get(roomNumber).stream().forEach(x -> {
