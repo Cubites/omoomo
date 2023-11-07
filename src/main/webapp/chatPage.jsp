@@ -24,6 +24,7 @@
 		/** game area **/
 		#gamepage{
 			width: 80%;
+			min-width: 1280px;
 			height: 100%;
 			background-color: #ddd;
 			display: flex;
@@ -33,8 +34,9 @@
 		}
 		#boardback{
 			width: 810px;
+			min-width: 810px;
 			height: 810px;
-			/* border: 1px solid #000; */
+			min-height: 810px;
 			background-color: #999;
 			border-radius: 20px;
 			box-shadow: inset 8px 8px 10px rgba(255, 255, 255, .25), inset -8px -8px 10px rgba(0, 0, 0, .25), 8px 8px 10px rgba(0, 0, 0, .45);
@@ -103,8 +105,8 @@
 			width: 20%;
 			height: 100%;
 			display: flex;
-			flex-direction: row;
-			justify-content: center;
+			flex-direction: column;
+			align-items: center;
 			padding: 30px 0;
 		}
 		.bowlImage{
@@ -121,13 +123,31 @@
 		}
 		.bowlImageInside{
 			width: 10vw;
+			min-width: 170px;
 			height: 10vw;
+			min-height: 170px;
 			border-radius: 120px;
 			box-shadow: inset 8px 8px 10px rgba(0, 0, 0, .25), inset -6px -6px 10px rgba(255, 255, 255, .25);
+		}
+		/*** userNickName ***/
+		.userNickName{
+			width: 12v;
+			min-width: 200px;
+			height: 50px;
+			border-radius: 10px;
+			background-color: #f9f9f9;
+			border: 3px solid #101010;
+			box-shadow: inset 4px 4px 10px rgba(0, 0, 0, .25), inset -6px -6px 10px rgba(255, 255, 255, .25);
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			margin: 20px 0;
 		}
 		/** chat area **/
 		#chatpage{
 			width: 20%;
+			min-width: 320px;
 			height: 100%;
 			background-color: #999;
 			display: flex;
@@ -136,13 +156,23 @@
 			align-items: center;
 			padding: 10px;
 		}
-		/*** user list area ***/
-		#userlist{
+		/*** ready button area ***/
+		#readyButton{
 			width: 90%;
 			height: 10%;
 			background-color: #ddd;
-			border-radius: 10px;
-			font-size: 30px;
+			border-radius: 30px;
+			font-size: 40px;
+			background-color: #C3A69A;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			font-weight: 900;
+			color: #61493f;
+			border: 3px solid #3d2c25;
+			box-shadow: inset 8px 8px 10px rgba(255, 255, 255, .25), inset -8px -8px 10px rgba(0, 0, 0, .25);
+			cursor: pointer;
 		}
 		/*** chat message area ***/
 		#messagesTextArea{
@@ -184,11 +214,12 @@
 	<div id="container">
 		<!-- 오목판 영역 -->
 		<div id="gamepage">
-			<div class="bowl" style="align-items: start;">
-				<div class="bowlImage" 
-					style="background-color: #e8e8e8;">
-					<div class="bowlImageInside" 
-						style="background-color: #bbbbbb;"></div>
+			<div class="bowl" style="justify-content: start;">
+				<div class="bowlImage" style="background-color: #e8e8e8;">
+					<div class="bowlImageInside" style="background-color: #bbbbbb;"></div>
+				</div>
+				<div class="userNickName">
+
 				</div>
 			</div>
 			<div id="boardback">
@@ -198,7 +229,7 @@
 							<div class="rowStoneBox">
 								<c:forEach var="j" begin="0" end="18">
 									<div class="stoneCell">
-										<div class="stone" data-h="${i}" data-v="${j}"></div>
+										<div id="p${i}-${j}" class="stone" data-h="${i}" data-v="${j}"></div>
 									</div>
 								</c:forEach>
 							</div>
@@ -206,7 +237,10 @@
 					</div>
 				</div>
 			</div>
-			<div class="bowl" style="align-items: end;">
+			<div class="bowl" style="justify-content: end;">
+				<div class="userNickName">
+					
+				</div>
 				<div class="bowlImage" style="background-color: #252525">
 					<div class="bowlImageInside" style="background-color: #101010"></div>
 				</div>
@@ -215,9 +249,8 @@
 		<!-- /오목판 영역 -->
 		<!-- 채팅 창 영역 -->
 		<div id="chatpage">
-			<div id="userlist">
-				<p id="usermine"></p>
-				<p id="userother"></p>
+			<div id="readyButton">
+				게임 준비
 			</div>
 			<span>username: <%=session.getAttribute("username") %></span><br>
 			<textarea id="messagesTextArea" readonly="readonly" rows="30"></textarea><br>
@@ -231,10 +264,35 @@
 	<script>
 		// 소켓 연결 요청
 		const websocket = new WebSocket("ws://localhost:8090/omoomo/chatroomServerEndpoint");
+		let userReady = false;
+		
+		websocket.onopen = function (message) {
+			var message = {
+				sign: "init"
+			}
+			websocket.send(JSON.stringify(message));
+		}
+
 		// 소켓 서버에서 오는 메세지 - 메시지
 		websocket.onmessage = function processMessage(message) {
 			var jsonData = JSON.parse(message.data);
-			if(jsonData.message != null) messagesTextArea.value += jsonData.message + "\n";
+			if(jsonData.sign == "init"){
+				Array.from(document.getElementsByClassName("stone")).forEach(stone => {
+					stone.style.backgroundColor = jsonData.c == -1 ? "black" : "white";
+				});
+				document.getElementsByClassName("bowlImage")[0].style.backgroundColor = jsonData.c == -1 ? "#e8e8e8" : "#252525";
+				document.getElementsByClassName("bowlImage")[1].style.backgroundColor = jsonData.c == -1 ? "#252525" : "#e8e8e8";
+				document.getElementsByClassName("bowlImageInside")[0].style.backgroundColor = jsonData.c == -1 ? "#bbbbbb" : "#101010";
+				document.getElementsByClassName("bowlImageInside")[1].style.backgroundColor = jsonData.c == -1 ? "#101010" : "#bbbbbb";
+			} else if(jsonData.sign == "chat"){
+				if(jsonData.message != null) messagesTextArea.value += jsonData.username + " : " + jsonData.message + "\n";
+			} else if(jsonData.sign == "game"){
+				console.log("game");
+				console.log("v: ", typeof jsonData.v, jsonData.v);
+				console.log("h: ", typeof jsonData.h, jsonData.h);
+				document.getElementById("p" + jsonData.h + "-" + jsonData.v).style.backgroundColor = jsonData.c == -1 ? "black" : "white";
+				document.getElementById("p" + jsonData.h + "-" + jsonData.v).style.opacity = 1;
+			}
 		}
 		// 소켓 서버에서 오는 메시지 - 에러
 		websocket.onerror = function(e){
@@ -251,33 +309,33 @@
 			messageText.value = "";
 		}
 
-		// 돌을 놓은 좌표를 보내는 함수
-		document.getElementById("boardfront").addEventListener('click', (e) => {
-			var message = {
-				sign: "stone",
-				x: e.offsetX,
-				y: e.offsetY
-			}
-			websocket.send(JSON.stringify(message)); // JSON 객체를 String으로 변환하여 전송
-		});
-
 		Array.from(document.getElementsByClassName("stone")).forEach((stone) => {
+			// 돌을 눌렀을 때
 			stone.addEventListener('click', (e) => {
-				console.log("h: " + e.target.dataset.h);
-				console.log("v: " + e.target.dataset.v);
+				// 돌이 놓여있지 않은 위치에만 놓을 수 있음
+				if(e.target.style.opacity != 1){
+					e.target.style.opacity = 1;
+					var message = {
+						sign: "stone",
+						h: e.target.dataset.h,
+						v: e.target.dataset.v
+					}
+					websocket.send(JSON.stringify(message)); // JSON 객체를 String으로 변환하여 전송
+				}
 			});
+			// 돌에 마우스를 올렸을 때 반투명하게 표시
 			stone.addEventListener('mouseenter', (e) => {
-				e.target.style.opacity = 0.5;
+				if(e.target.style.opacity != 1){
+					e.target.style.opacity = 0.5;
+				}
 			});
+			// 돌에서 마우스가 벗어나면 원래상태(숨김)로 되돌림
 			stone.addEventListener('mouseleave', (e) => {
 				if(e.target.style.opacity != 1){
 					e.target.style.opacity = 0;
 				}
 			});
-			stone.addEventListener('click', (e) => {
-				e.target.style.opacity = 1;
-			});
-		})
+		});
 	</script>
 </body>
 </html>
