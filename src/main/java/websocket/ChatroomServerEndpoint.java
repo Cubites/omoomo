@@ -87,10 +87,12 @@ public class ChatroomServerEndpoint {
 			            ...
 		            }
 		            stone location = {h: 0, v: 4}
-		            stone color = {color: "black" ? "white"}
+		            int stone_color = {location: -1 ? 1 } // black : -1 , white: 1
 			     */
 			    // logic.win((Map) stone_color, (Map) stone_location, (List<ArrayList<HashMap<String, Integer>>) stone_area);
 				
+			    
+			    
 			    /*
 			     1. stone 5 ?
 			     2. Need stone 33 ?
