@@ -12,6 +12,7 @@ public class RoomVO {
     //private Set<Session> users;
     
     public String genRoomNumber() {
+        String seed = name + mode;
     	int hashCode = name.hashCode();
     	String roomNumber = Integer.toHexString(hashCode);
     	
