@@ -15,8 +15,6 @@ public class HomeController implements Controller{
 		
 		//home.do로 요청이오면 home페이지로 보내기만함 
 		
-		
-		
 		return "home";
 	}
 

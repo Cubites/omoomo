@@ -25,18 +25,9 @@ public class HomeAndEncoding implements Filter {
 		request.setCharacterEncoding("UTF-8");
 		
 		HttpServletRequest req = (HttpServletRequest)request;
-		//String url = req.getRequestURI();
-		//String protocol = request.getProtocol();
 		
-		
-//		if(!url.contains(".do")) {
-//			System.out.println("필터!");
-//			String contextPath = req.getContextPath();
-//			HttpServletResponse resp = (HttpServletResponse) response;
-//			resp.sendRedirect(contextPath+"/home.do");
-//		}else {
 		chain.doFilter(request, response);
-		//}
+		
 		
 	}
 
