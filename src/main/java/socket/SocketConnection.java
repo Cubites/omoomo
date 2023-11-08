@@ -142,8 +142,28 @@ public class SocketConnection {
         ready = 0;
     }
     
-    // 오목 판별
+    // 승패 여부 전송
     public boolean checkOmok() {
         return true;
+    }
+    
+    // 승패 여부 전송 - 게임 중 나간 경우
+    public void runGame(String roomNumber, String username) {
+        JSONObject json = new JSONObject();
+        json.put("sign", "run");
+        for(Session user : userSockets.get(roomNumber)) {
+            if(username.equals(user.getUserProperties().get("username"))) {
+                json.put("lose", username);
+            } else {
+                json.put("win", user.getUserProperties().get("username"));
+            }
+        }
+        userSockets.get(roomNumber).stream().forEach(user -> {
+            try{
+                user.getBasicRemote().sendText(json.toString());
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
 }

@@ -1,13 +1,8 @@
 package websocket;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonWriter;
 import javax.websocket.EndpointConfig;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
@@ -61,7 +56,7 @@ public class ChatroomServerEndpoint {
 			    sc.gameStart(roomNumber);
             } else if("run".equals(reqMessage.getString("sign"))) {
                 // 게임 중 방을 나가는 경우
-                
+                sc.runGame(roomNumber, username);
                 
                 
             } else if("chat".equals(reqMessage.getString("sign"))) {

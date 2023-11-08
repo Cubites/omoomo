@@ -392,40 +392,28 @@
 				console.log("h: ", typeof jsonData.h, jsonData.h);
 				document.getElementById("p" + jsonData.h + "-" + jsonData.v).style.backgroundColor = jsonData.c == -1 ? "black" : "white";
 				document.getElementById("p" + jsonData.h + "-" + jsonData.v).style.opacity = 1;
-			} else if(jsonData.sign == "gameEnd"){
+			} else if(jsonData.sign == "gameEnd" || jsonData.sign == "run"){
 				// 게임 끝
 				$.ajax({
 					type: "post",
 					async: true,
-					url: "http://localhost:8090/pro16/mem",
+					url: "http://localhost:8090/onoono/waitingRoom.jsp",
 					dataType: "text", 
 					data: {
-						winUsername: jsonData.winUsername,
-						loseUsername: jsonData.loseUsername
+						username: <%=session.getAttribute("username") %>,
+						result: jsonData.win == <%=session.getAttribute("username") %> ? "win" : "lose"
 					},
 					success: function(data, textStatus){
-						if(data == 'usable'){
-							$('#message').text("사용할 수 있는 ID입니다.");
-						} else {
-							$('#message').text("사용할 수 없는 ID입니다.");
+						if(jsonData.sign == "run"){
+							location.href = "./waitingRoom.jsp";
 						}
 					}
 				});
-			} 
+			}
 		}
 		// 소켓 서버에서 오는 메시지 - 에러
 		websocket.onerror = function(e){
 			console.log(e);
-		}
-
-		websocket.onclose = function(){
-			if(gameStartConstant){
-				var message = {
-					sign: "run",
-					username: document.getElementsByClassName("userNickName")[1].innerHTML
-				}
-				websocket.send(JSON.stringify(message));
-			}
 		}
 		
 		// 채팅 보내는 함수
@@ -454,7 +442,15 @@
 		// 방 나가기
 		document.getElementById("exit").addEventListener("click", e => {
 			if(confirm("정말 나가시겠습니까?" + (gameStartConstant ? " 지금 나가시면 패배 처리됩니다." : ""))){
-				location.href = "./waitingRoom.jsp";
+				if(gameStartConstant){
+					var message = {
+						sign: "run",
+						username: document.getElementsByClassName("userNickName")[1].innerHTML
+					}
+					websocket.send(JSON.stringify(message));
+				} else {
+					location.href = "./waitingRoom.jsp";
+				}
 			}
 		});
 
