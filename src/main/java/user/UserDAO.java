@@ -2,6 +2,8 @@ package user;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
@@ -9,16 +11,18 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
+
 public class UserDAO {
 	private Connection con;
 	private PreparedStatement pstmt;
 	private DataSource dataFactory;
-
+    private ResultSet rs;
 	public UserDAO() {
 		try {
 			Context ctx = new InitialContext();
 			Context envContext = (Context) ctx.lookup("java:/comp/env");
 			dataFactory = (DataSource) envContext.lookup("jdbc/oracle");
+			 con = dataFactory.getConnection();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -27,7 +31,7 @@ public class UserDAO {
 	
 	public void addMember(UserVO user) {
 		try {
-			con = dataFactory.getConnection();
+			
 			String name = user.getUser_name();
 			String pw = user.getUser_pw();
 			String query = "INSERT INTO user_table" + " VALUES(user_seq.nextval, ?, ?, 0, 0, 0)";
@@ -49,7 +53,7 @@ public class UserDAO {
 		String pw = user.getUser_pw();
 
 		try {
-			con = dataFactory.getConnection();
+			
 			String query = "select decode(count(*),1,'true','false') as result from user_table";
 			query += " where user_name=? and user_pw=?";
 			pstmt = con.prepareStatement(query);
@@ -68,7 +72,7 @@ public class UserDAO {
 	public boolean overlappedID(String id){
 		boolean result = false;
 		try {
-			con = dataFactory.getConnection();
+			
 			String query = "select decode(count(*),1,'true','false') as result from user_table";
 			query += " where user_name=?";
 			System.out.println("prepareStatememt: " + query);
@@ -85,4 +89,58 @@ public class UserDAO {
 		
 		return result;
 	}
+	
+	
+	public synchronized List<UserVO> MemberList(String username){
+        System.out.println("dao호출");
+        List<UserVO> list = new ArrayList<>();
+        String sql ="select * from rank_view where user_name LIKE '%'||?||'%'";
+        try {
+           
+            pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, username);
+            rs = pstmt.executeQuery();
+            
+            while(rs.next()) {
+                UserVO vo = new UserVO();
+                vo.setUser_name(rs.getString("user_name"));
+                vo.setUser_win(rs.getInt("user_win"));
+                vo.setUser_lose(rs.getInt("user_lose"));
+                vo.setRanking(rs.getInt("ranking"));
+                list.add(vo);
+            }
+            rs.close();
+            pstmt.close();
+            
+            
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+    
+    
+    public synchronized void recordWinAndLose(String winner, String loser) {
+        String sql1 = "update user_table set user_win = user_win+1 where user_name = ?";
+        String sql2 = "update user_table set user_lose = user_lose+1 where user_name = ?";
+        String sql3 = "update user_table set user_score = round((user_win*3)*0.6+(user_lose*-1)*0.3+(user_win+user_lose)*0.1)";
+        
+        try {
+            
+           
+            pstmt = con.prepareStatement(sql1);
+            pstmt.setString(1, winner);
+            pstmt.executeUpdate();
+            pstmt = con.prepareStatement(sql2);
+            pstmt.setString(1, loser);
+            pstmt.executeUpdate();
+            
+            con.prepareStatement(sql3).executeUpdate();
+            
+            pstmt.close();
+            
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

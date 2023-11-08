@@ -1,4 +1,4 @@
-package servlet_j;
+package ajax;
 
 import java.io.IOException;
 import java.util.List;
@@ -12,8 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import userRank.RankDAO;
-import userRank.RankVO;
+import user.UserDAO;
+import user.UserVO;
 
 
 @WebServlet("/getMemberList.do")
@@ -25,14 +25,14 @@ public class ajaxservlet extends HttpServlet {
 		request.setCharacterEncoding("utf-8");
 		String name = request.getParameter("name");
 		
-		System.out.println("ajax호출");
-		RankDAO dao = new RankDAO();
-		List<RankVO> list = dao.MemberList(name);
+		
+		UserDAO dao = new UserDAO();
+		List<UserVO> list = dao.MemberList(name);
 		
 		JsonArray jsonArray = new JsonArray();
 		
 		
-		for(RankVO vo : list) {
+		for(UserVO vo : list) {
 			JsonObject jo = new JsonObject();
 			jo.addProperty("userName", vo.getUser_name());
 			jo.addProperty("win", vo.getUser_win());
