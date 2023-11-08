@@ -14,7 +14,7 @@ public class WroomController implements Controller{
 
 		
 		
-		return "waitingRoom";
+		return "wroom";
 	}
 
 }
