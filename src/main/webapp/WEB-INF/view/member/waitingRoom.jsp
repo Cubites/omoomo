@@ -389,7 +389,9 @@
     	ajaxList("");
         $("#searchInputbox > input").keyup(function(){
         const name = $(this).val();
+       if(name == ""){
         ajaxList(name);
+       }
     })
 
     $("#searchInputbox > button").click(function(){
