@@ -4,9 +4,82 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>오목게임 회원가입 </title>
+<style>
+p#correct {
+	display: none;
+}
+p#incorrect {
+	display: none;
+}
+</style>
+<script  src="http://code.jquery.com/jquery-latest.min.js"></script>
+<script type="text/javascript">
+function checkName(){
+    var _id=$("#t_id").val();
+    if(_id==''){
+   	 alert("ID를 입력하세요");
+   	 return;
+    }
+    $.ajax({
+       type:"post",
+       async:true,  
+       url:"checkName",
+       dataType:"text",
+       data: {id:_id},
+       success:function (data,textStatus){
+    	   
+          if(data=='usable'){
+        	  alert("사용할 수 있는 ID입니다.")
+       	   	$('#btnDuplicate').prop("disabled", true);
+          }else{
+        	  alert("사용할 수 없는 ID입니다. 다시 입력해주세요.")
+          }
+       },
+       error:function(data,textStatus){
+          alert("에러가 발생했습니다.");ㅣ
+       },
+       complete:function(data,textStatus){
+          //alert("작업을완료 했습니다");
+       }
+    });  //end ajax	 
+ }	
+
+function checkPw() {
+	console.log("1번", $("#pw_1").val())
+	console.log("2번", $("#pw_2").val())
+	if (($("#pw_1").val()) != $("#pw_2").val()) {
+		//alert("비밀번호가 다릅니다. 다시 입력해주세요.")
+		$('#correct').hide();
+		$('#incorrect').show();
+		$('#btnRegister').prop("disabled", true);
+	} else {
+		//alert("비밀번호가 일치합니다.")
+		$('#correct').show();
+		$('#incorrect').hide();
+		$('#btnRegister').prop("disabled", false);
+	}
+}
+
+ 
+function goHome() {
+	//location.href="<c:url value='/login.do'/>";
+	location.href="/omoomo/home.do";
+}
+
+</script>
 </head>
 <body>
 <h1>회원가입 폼 화면입니다.</h1>
+<form action="register.do" method="post">
+	<p> 아이디 <input type="text" name="user_name" id="t_id"/> <input type="button" id="btnDuplicate" value="중복확인" onClick="checkName()" /> <br>
+	<p> 비밀번호 <input type="password" name="user_pw" id="pw_1" /><br>
+	<p> 비밀번호확인 <input type="password" name="user_pw_repeat" id="pw_2" oninput="checkPw()"/> <br>
+	<p id="correct"> 비밀번호가 일치합니다.</p>
+	<p id="incorrect"> 비밀번호가 일치하지 않습니다.</p>
+	<p>
+	<input type="button" value="돌아가기" onClick="goHome()">
+	<input type="submit" value="가입하기" id="btnRegister">
+</form>
 </body>
 </html>
