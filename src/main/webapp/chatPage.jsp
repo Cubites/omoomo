@@ -12,6 +12,12 @@
 			padding: 0;
 			box-sizing: border-box;
 		}
+		.dragNo{
+			-webkit-user-select:none;
+			-moz-user-select:none;
+			-ms-user-select:none;
+			user-select:none;
+		}
 		/* total page */
 		#container{
 			display: flex;
@@ -156,13 +162,21 @@
 			align-items: center;
 			padding: 10px;
 		}
-		/*** ready button area ***/
-		#readyButton{
+		/*** button area ***/
+		#readyExitBox{
 			width: 90%;
 			height: 10%;
+			display: flex;
+			flex-direction: row;
+			justify-content: space-between;
+			align-items: center;
+		}
+		#readyButton{
+			width: 60%;
+			height: 90%;
 			background-color: #ddd;
 			border-radius: 30px;
-			font-size: 40px;
+			font-size: 30px;
 			background-color: #C3A69A;
 			display: flex;
 			flex-direction: column;
@@ -173,6 +187,28 @@
 			border: 3px solid #3d2c25;
 			box-shadow: inset 8px 8px 10px rgba(255, 255, 255, .25), inset -8px -8px 10px rgba(0, 0, 0, .25);
 			cursor: pointer;
+		}
+		#readyButton:hover{
+			background-color: #61493f;
+			color: #C3A69A;
+			box-shadow: inset 4px 4px 10px rgba(0, 0, 0, .25), inset -6px -6px 10px rgba(255, 255, 255, .25);
+		}
+		#exit{
+			width: 30%;
+			height: 90%;
+			background-color: #666;
+			border-radius: 30px;
+			border: 3px solid #333;
+			font-size: 20px;
+			font-weight: bold;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			cursor: pointer;
+		}
+		#exit:hover{
+			background-color: #333;
+			color: #fff;
 		}
 		/*** chat message area ***/
 		#messagesTextArea{
@@ -239,7 +275,7 @@
 			</div>
 			<div class="bowl" style="justify-content: end;">
 				<div class="userNickName">
-					
+					<%=session.getAttribute("username") %>
 				</div>
 				<div class="bowlImage" style="background-color: #252525">
 					<div class="bowlImageInside" style="background-color: #101010"></div>
@@ -249,14 +285,14 @@
 		<!-- /오목판 영역 -->
 		<!-- 채팅 창 영역 -->
 		<div id="chatpage">
-			<div id="readyButton">
-				게임 준비
+			<div id="readyExitBox">
+				<div id="readyButton" class="dragNo">게임 준비</div>
+				<div id="exit" class="dragNo">나가기</div>
 			</div>
-			<span>username: <%=session.getAttribute("username") %></span><br>
 			<textarea id="messagesTextArea" readonly="readonly" rows="30"></textarea><br>
 			<div id="inputbox">
 				<input type="text" id="messageText" size="50">
-				<input type="button" value="Send" onclick="sendMessage();">
+				<input type="button" value="Send" class="dragNo" onclick="sendMessage();">
 			</div>
 		</div>
 		<!-- /채팅 창 영역 -->
@@ -277,6 +313,7 @@
 		websocket.onmessage = function processMessage(message) {
 			var jsonData = JSON.parse(message.data);
 			if(jsonData.sign == "init"){
+				userReady = jsonData.ready;
 				Array.from(document.getElementsByClassName("stone")).forEach(stone => {
 					stone.style.backgroundColor = jsonData.c == -1 ? "black" : "white";
 				});
@@ -301,12 +338,14 @@
 		
 		// 채팅 보내는 함수
 		function sendMessage() {
-			var message = {
-				sign: "chat",
-				m: messageText.value
+			if(messageText.value != ""){
+				var message = {
+					sign: "chat",
+					m: messageText.value
+				}
+				websocket.send(JSON.stringify(message)); // JSON 객체를 String으로 변환하여 전송
+				messageText.value = "";
 			}
-			websocket.send(JSON.stringify(message)); // JSON 객체를 String으로 변환하여 전송
-			messageText.value = "";
 		}
 
 		Array.from(document.getElementsByClassName("stone")).forEach((stone) => {

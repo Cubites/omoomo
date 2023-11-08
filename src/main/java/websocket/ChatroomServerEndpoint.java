@@ -2,6 +2,7 @@ package websocket;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -38,21 +39,14 @@ public class ChatroomServerEndpoint {
 		boards.put(roomNumber, new Board());
 		// 현재 소켓 접속자 현황 확인용 로그
 		System.out.println("[서버] 유저 입장");
-		System.out.println("===== 현재 방 현황 =====");
-		System.out.println("| 방 번호 | 현재 유저 수 |");
-		for(String room : sc.getUserSockets().keySet()) {
-		    System.out.println("---------------------");
-		    System.out.println("| " + room + " | " + sc.getUserSockets().get(room).size() + "명 |");
-		}
-		System.out.println("---------------------");
-//		JSONObject json = new JSONObject();
-//		json.put("c", (String) userSession.getUserProperties().get("c"));
-		
-//        try{
-//            userSession.getBasicRemote().sendText(json.toString());
-//        } catch(Exception e) {
-//            e.printStackTrace();
-//        }
+		sc.printRoomAndSockets();
+//		System.out.println("===== 현재 방 현황 =====");
+//		System.out.println("| 방 번호 | 현재 유저 수 |");
+//		for(String room : sc.getUserSockets().keySet()) {
+//		    System.out.println("---------------------");
+//		    System.out.println("| " + room + " | " + sc.getUserSockets().get(room).size() + "명 |");
+//		}
+//		System.out.println("---------------------");
 	}
 	
 	@OnMessage
@@ -64,14 +58,16 @@ public class ChatroomServerEndpoint {
 			JSONObject reqMessage = new JSONObject(message);
 			System.out.println("요청 유형: " + reqMessage.get("sign"));
 			if("init".equals(reqMessage.get("sign"))) {
-			    JSONObject resMessage = new JSONObject();
-			    resMessage.put("sign", "init");
-                resMessage.put("c", userSession.getUserProperties().get("c"));
-                try{
-                    userSession.getBasicRemote().sendText(resMessage.toString());
-                } catch(Exception e) {
-                    e.printStackTrace();
-                }
+			    sc.setInit(userSession);
+//			    JSONObject resMessage = new JSONObject();
+//			    resMessage.put("sign", "init");
+//                resMessage.put("c", userSession.getUserProperties().get("c"));
+//                reqMessage.put("ready", userSession.getUserProperties().get("ready"));
+//                try{
+//                    userSession.getBasicRemote().sendText(resMessage.toString());
+//                } catch(Exception e) {
+//                    e.printStackTrace();
+//                }
 			} else if("chat".equals(reqMessage.get("sign"))) {
 				// 받은 메시지가 채팅 메시지 인 경우 - 채팅 메시지를 같은 방내 다른 사용자에게 전송
 				sc.sendMessage(roomNumber, username, (String) reqMessage.get("m"));

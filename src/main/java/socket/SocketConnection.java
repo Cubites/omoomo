@@ -18,11 +18,23 @@ public class SocketConnection {
         return userSockets;
     }
     
+    // 방, 소켓 현황 로그 출력
+    public void printRoomAndSockets() {
+        System.out.println("===== 현재 방 현황 =====");
+        System.out.println("| 방 번호 | 현재 유저 수 |");
+        for(String room : userSockets.keySet()) {
+            System.out.println("---------------------");
+            System.out.println("| " + room + " | " + userSockets.get(room).size() + "명 |");
+        }
+        System.out.println("---------------------");
+    }
+    
     // 방 입장
     public void enterRoom(String roomNumber, Session session) {
         if(userSockets.get(roomNumber) == null) {
             // 방이 없는 경우 생성 및 입장
             session.getUserProperties().put("c",  -1);
+            session.getUserProperties().put("ready", false);
             userSockets.put(roomNumber, new HashSet<Session>(Arrays.asList(session)));
         } else {
             // 방이 있는 경우 입장
@@ -43,6 +55,19 @@ public class SocketConnection {
         }
     }
     
+    // 초기값 설정
+    public void setInit(Session userSession) {
+        JSONObject resMessage = new JSONObject();
+        resMessage.put("sign", "init");
+        resMessage.put("c", userSession.getUserProperties().get("c"));
+        resMessage.put("ready", userSession.getUserProperties().get("ready"));
+        try{
+            userSession.getBasicRemote().sendText(resMessage.toString());
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
     // 메시지 보내기
     public void sendMessage(String roomNumber, String username, String chatMessage) {
         JSONObject resMessage = new JSONObject();
@@ -56,5 +81,10 @@ public class SocketConnection {
                 e.printStackTrace();
             }
         });
+    }
+    
+    // 오목 판별
+    public boolean checkOmok() {
+        return true;
     }
 }
