@@ -106,6 +106,34 @@
 			cursor: pointer;
 			opacity: 0;
 		}
+		/*** cover ***/
+		#cover{
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-color: rgba(0, 0, 0, .45);
+			z-index: 999;
+			border-radius: 20px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+		#cover>div{
+			background-color: #C3A69A;
+			color: #3d2c25;
+			text-align: center;
+			width: 600px;
+			height: 200px;
+			border-radius: 20px;
+			font-weight: bold;
+			font-size: 25px;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+		}
 		/*** stone bowl design ***/
 		.bowl{
 			width: 20%;
@@ -171,7 +199,7 @@
 			justify-content: space-between;
 			align-items: center;
 		}
-		#readyButton{
+		.readyButton{
 			width: 60%;
 			height: 90%;
 			background-color: #ddd;
@@ -188,7 +216,12 @@
 			box-shadow: inset 8px 8px 10px rgba(255, 255, 255, .25), inset -8px -8px 10px rgba(0, 0, 0, .25);
 			cursor: pointer;
 		}
-		#readyButton:hover{
+		.readyButton:hover{
+			background-color: #61493f;
+			color: #C3A69A;
+			box-shadow: inset 4px 4px 10px rgba(0, 0, 0, .25), inset -6px -6px 10px rgba(255, 255, 255, .25);
+		}
+		.readyButtonActivate{
 			background-color: #61493f;
 			color: #C3A69A;
 			box-shadow: inset 4px 4px 10px rgba(0, 0, 0, .25), inset -6px -6px 10px rgba(255, 255, 255, .25);
@@ -245,6 +278,7 @@
 			cursor: pointer;
 		}
 	</style>
+	<script src="https://code.jquery.com/jquery-latest.min.js"></script>
 </head>
 <body>
 	<div id="container">
@@ -272,6 +306,12 @@
 						</c:forEach>
 					</div>
 				</div>
+				<div id="cover" class="dragNo">
+					<div>
+						<p>게임을 시작하려면 준비를 눌러주세요.</p>
+						<p>양측 모두 준비를 누르면 바로 게임이 시작됩니다.</p>
+					</div>
+				</div>
 			</div>
 			<div class="bowl" style="justify-content: end;">
 				<div class="userNickName">
@@ -286,7 +326,7 @@
 		<!-- 채팅 창 영역 -->
 		<div id="chatpage">
 			<div id="readyExitBox">
-				<div id="readyButton" class="dragNo">게임 준비</div>
+				<div id="" class="readyButton dragNo">게임 준비</div>
 				<div id="exit" class="dragNo">나가기</div>
 			</div>
 			<textarea id="messagesTextArea" readonly="readonly" rows="30"></textarea><br>
@@ -301,6 +341,7 @@
 		// 소켓 연결 요청
 		const websocket = new WebSocket("ws://localhost:8090/omoomo/chatroomServerEndpoint");
 		let userReady = false;
+		let gameStartConstant = false;
 		
 		websocket.onopen = function (message) {
 			var message = {
@@ -313,7 +354,7 @@
 		websocket.onmessage = function processMessage(message) {
 			var jsonData = JSON.parse(message.data);
 			if(jsonData.sign == "init"){
-				userReady = jsonData.ready;
+				// 초기 설정(돌 색상, 준비 여부, 돌통 색)
 				Array.from(document.getElementsByClassName("stone")).forEach(stone => {
 					stone.style.backgroundColor = jsonData.c == -1 ? "black" : "white";
 				});
@@ -321,19 +362,70 @@
 				document.getElementsByClassName("bowlImage")[1].style.backgroundColor = jsonData.c == -1 ? "#252525" : "#e8e8e8";
 				document.getElementsByClassName("bowlImageInside")[0].style.backgroundColor = jsonData.c == -1 ? "#bbbbbb" : "#101010";
 				document.getElementsByClassName("bowlImageInside")[1].style.backgroundColor = jsonData.c == -1 ? "#101010" : "#bbbbbb";
+			} else if(jsonData.sign == "match") {
+				// 유저가 입장했을 때 서로 상대 유저에게 유저 닉네임 표시
+				document.getElementsByClassName("userNickName")[0].innerText = jsonData.matchUserNickname;
+			} else if(jsonData.sign == "ready"){
+				// 준비 여부 체크
+				userReady = jsonData.value;
+				let readyButton = document.getElementsByClassName("readyButton")[0];
+				readyButton.innerText = userReady ? "준비 완료" : "게임 준비";
+				if(userReady){
+					readyButton.classList.add("readyButtonActivate");
+				} else {
+					readyButton.classList.remove("readyButtonActivate");
+				}
+			} else if(jsonData.sign == "start"){
+				// 게임 시작
+				if(jsonData.value){
+					gameStartConstant = jsonData.value;
+					document.getElementById("cover").style.display = "none";
+					document.getElementsByClassName("readyButton")[0].innerText = "게임 중";
+				}
 			} else if(jsonData.sign == "chat"){
+				// 채팅
 				if(jsonData.message != null) messagesTextArea.value += jsonData.username + " : " + jsonData.message + "\n";
 			} else if(jsonData.sign == "game"){
+				// 놓은 돌을 상대 판에도 표시
 				console.log("game");
 				console.log("v: ", typeof jsonData.v, jsonData.v);
 				console.log("h: ", typeof jsonData.h, jsonData.h);
 				document.getElementById("p" + jsonData.h + "-" + jsonData.v).style.backgroundColor = jsonData.c == -1 ? "black" : "white";
 				document.getElementById("p" + jsonData.h + "-" + jsonData.v).style.opacity = 1;
-			}
+			} else if(jsonData.sign == "gameEnd"){
+				// 게임 끝
+				$.ajax({
+					type: "post",
+					async: true,
+					url: "http://localhost:8090/pro16/mem",
+					dataType: "text", 
+					data: {
+						winUsername: jsonData.winUsername,
+						loseUsername: jsonData.loseUsername
+					},
+					success: function(data, textStatus){
+						if(data == 'usable'){
+							$('#message').text("사용할 수 있는 ID입니다.");
+						} else {
+							$('#message').text("사용할 수 없는 ID입니다.");
+						}
+					}
+				});
+			} 
 		}
 		// 소켓 서버에서 오는 메시지 - 에러
 		websocket.onerror = function(e){
 			console.log(e);
+		}
+
+		websocket.onclose = function(){
+			if(gameStartConstant){
+				var message = {
+					sign: "run",
+					username: document.getElementsByClassName("userNickName")[1].innerHTML
+				}
+				websocket.send(JSON.stringify(message));
+			}
 		}
 		
 		// 채팅 보내는 함수
@@ -347,6 +439,24 @@
 				messageText.value = "";
 			}
 		}
+
+		// 게임 준비
+		document.getElementsByClassName("readyButton")[0].addEventListener("click", (e) => {
+			if(!gameStartConstant){
+				var message = {
+					sign: "ready",
+					value: !userReady
+				}
+				websocket.send(JSON.stringify(message));
+			}
+		});
+
+		// 방 나가기
+		document.getElementById("exit").addEventListener("click", e => {
+			if(confirm("정말 나가시겠습니까?" + (gameStartConstant ? " 지금 나가시면 패배 처리됩니다." : ""))){
+				location.href = "./waitingRoom.jsp";
+			}
+		});
 
 		Array.from(document.getElementsByClassName("stone")).forEach((stone) => {
 			// 돌을 눌렀을 때
