@@ -40,9 +40,8 @@ public class UpdateRoomInfoServlet extends HttpServlet {
         
         ServletContext sc = request.getServletContext();
         Map<String, RoomVO> map = (HashMap)sc.getAttribute("roomMap");
-        if(map.get(roomNumber).getPeopleNum()==2) {
-            map.get(roomNumber).setPeopleNum(1);
-        }else if(map.get(roomNumber).getPeopleNum()==1) {
+        map.get(roomNumber).setPeopleNum(map.get(roomNumber).getPeopleNum()-1);
+        if(map.get(roomNumber).getPeopleNum() <= 0) {
             map.remove(roomNumber);
         }
         

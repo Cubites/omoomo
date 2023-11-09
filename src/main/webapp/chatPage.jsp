@@ -500,7 +500,7 @@
 				console.log(jsonData);
 				document.getElementById("p" + jsonData.h + "-" + jsonData.v).style.backgroundColor = jsonData.c == -1 ? "black" : "white";
 				document.getElementById("p" + jsonData.h + "-" + jsonData.v).style.opacity = 1;
-			} else if(jsonData.sign == "gameEnd"){
+			} else if(jsonData.sign == "gameEnd" || jsonData.sign == "run"){
 				/* 
 					* 게임이 끝난 경우(한 쪽이 승리했거나, 한 명이 게임을 나간 경우)
 						- [화면] "게임 중" 이었던 버튼을 다시 "게임 준비"로 변경
@@ -532,10 +532,7 @@
 					}
 				});
 
-
-				console.log("jsonData.lost: " + jsonData.lose + ' / \<\%\=\session\.getAttribute(\"username\") \%\> : ' + '<%=session.getAttribute("username") %>');
-				if(jsonData.sign == "run" && jsonData.lose != '<%=session.getAttribute("username") %>'){
-					alert("jsonData.lost: " + jsonData.lose + ' / \<\%\=\session\.getAttribute(\"username\") \%\> : ' + '<%=session.getAttribute("username") %>');
+				if(jsonData.sign == "run" && jsonData.lose == '${login_user_name}'){
 					$.ajax({
 						type: "post",
 						async: true,
@@ -578,8 +575,6 @@
 					document.getElementsByClassName("bowlImageInside")[1].style.backgroundColor = "#101010";
 					document.getElementById("resultValue").value = 0;
 				}
-				
-			} else if(jsonData.sign == "run"){
 				
 			}
 		}
