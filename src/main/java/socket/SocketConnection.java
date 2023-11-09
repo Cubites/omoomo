@@ -185,7 +185,17 @@ public class SocketConnection {
     }
     
     // 방 나감
-    public void exitRoom(Session session) {
+    public void exitRoom(String roomNumber, Session session) {
+        JSONObject json = new JSONObject();
+        json.put("username", session.getUserProperties().get("username"));
+        json.put("roomNumber", roomNumber);
+        
+        try{
+            session.getBasicRemote().sendText(json.toString());
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        
         userSockets.get(session.getUserProperties().get("roomNumber")).remove(session);
         
         // 방에 아무도 없으면 방도 삭제

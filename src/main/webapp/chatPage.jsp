@@ -381,6 +381,13 @@
 		const websocket = new WebSocket("ws://localhost:8090/omoomo/chatroomServerEndpoint");
 		let userReady = false;
 		let gameStartConstant = false;
+
+		history.pushState(null, null, location.href); 
+
+		// 뒤로라기 이벤트감지 -> 현재페이지로 이동
+		window.onpopstate = function() { 
+			history.go(1); 
+		}
 		
 		websocket.onopen = function (message) {
 			var message = {
@@ -493,7 +500,7 @@
 				console.log(jsonData);
 				document.getElementById("p" + jsonData.h + "-" + jsonData.v).style.backgroundColor = jsonData.c == -1 ? "black" : "white";
 				document.getElementById("p" + jsonData.h + "-" + jsonData.v).style.opacity = 1;
-			} else if(jsonData.sign == "gameEnd" || jsonData.sign == "run"){
+			} else if(jsonData.sign == "gameEnd"){
 				/* 
 					* 게임이 끝난 경우(한 쪽이 승리했거나, 한 명이 게임을 나간 경우)
 						- [화면] "게임 중" 이었던 버튼을 다시 "게임 준비"로 변경
@@ -524,7 +531,11 @@
 						console.log('response: ' + data);
 					}
 				});
+
+
+				console.log("jsonData.lost: " + jsonData.lose + ' / \<\%\=\session\.getAttribute(\"username\") \%\> : ' + '<%=session.getAttribute("username") %>');
 				if(jsonData.sign == "run" && jsonData.lose != '<%=session.getAttribute("username") %>'){
+					alert("jsonData.lost: " + jsonData.lose + ' / \<\%\=\session\.getAttribute(\"username\") \%\> : ' + '<%=session.getAttribute("username") %>');
 					$.ajax({
 						type: "post",
 						async: true,
@@ -568,13 +579,15 @@
 					document.getElementById("resultValue").value = 0;
 				}
 				
+			} else if(jsonData.sign == "run"){
+				
 			}
 		}
 		// 소켓 서버에서 오는 메시지 - 에러
 		websocket.onerror = function(e){
 			console.log(e);
 		}
-		
+
 		// 채팅 보내는 함수
 		function sendMessage() {
 			if(messageText.value != ""){
