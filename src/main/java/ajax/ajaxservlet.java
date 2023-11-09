@@ -25,6 +25,7 @@ public class ajaxservlet extends HttpServlet {
 		request.setCharacterEncoding("utf-8");
 		String name = request.getParameter("name");
 		
+		System.out.println(name + "login");
 		
 		UserDAO dao = new UserDAO();
 		List<UserVO> list = dao.MemberList(name);

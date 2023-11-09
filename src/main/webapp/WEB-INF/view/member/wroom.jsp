@@ -13,7 +13,7 @@
       <script type="text/javascript">
         $(function () {
 		 /*----------------장원 시작(1)---------------*/
-          ajaxLoginUser("${user_name}");
+          ajaxLoginUser("${login_user_name}");
           ajaxList("");
           $("#searchInputbox > input").keyup(function () {
             const name = $(this).val();
@@ -99,7 +99,7 @@
         
         /*----------------장원 시작(2)---------------*/
         function ajaxLoginUser(loginUser) {
-          alert(loginUser);
+          
           $.ajax({
             type: 'post',
             url: "<c:url value='/getMemberList.do'/>",
@@ -129,14 +129,14 @@
               var member = result;
               var html = "";
               var idx;
-              if (member.length > 8) {
-                idx = 8;
+              if (member.length > 10) {
+                idx = 10;
               } else {
                 idx = member.length
               }
               for (let i = 0; i < idx; i++) {
-                html += "<tr class='rankfont'><td>" + member[i].userName + "</td>"
-                html += "<td>" + "  " + member[i].rank + "등</td></tr>"
+                html += "<tr class='rankfont'><td>" + member[i].userName +"</td>"
+                html += "<td>" + member[i].rank + "등</td></tr>"
               }
 
               $("#rakingshow").html(html);
@@ -278,7 +278,15 @@
 
 
         }
-
+        .rankfont{
+    		display: inline-block;
+    		
+    		margin-top: 20px;
+    		margin-left: 70px;
+    		font-size: 25px;
+    		font-weight: bold;
+    	}
+		
         #search>.fonts {
           top: 10px;
           position: relative;
