@@ -184,8 +184,20 @@ public class SocketConnection {
         });
     }
     
-    // 방 나감
-    public void exitRoom(String roomNumber, Session session) {
+    public void exitRoom(String roomNumber, Session session){
+        JSONObject json = new JSONObject();
+        json.put("sign", "exit");
+        json.put("username", session.getUserProperties().get("username"));
+        json.put("roomNumber", roomNumber);
+        try {
+            session.getBasicRemote().sendText(json.toString());
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    // 소켓 끊김
+    public void closeSocket(String roomNumber, Session session) {
         
         userSockets.get(session.getUserProperties().get("roomNumber")).remove(session);
         

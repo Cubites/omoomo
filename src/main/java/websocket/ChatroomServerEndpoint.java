@@ -96,16 +96,17 @@ public class ChatroomServerEndpoint {
 			        Boolean checkThree = boards.get(roomNumber).doubleThree((int) userSession.getUserProperties().get("c"), stoneLocation);
 			        System.out.println("33 판정: " + checkThree);
 			        
-			        
 			    }
-			} 
+			} else if("exit".equals(reqMessage.get("sign"))) {
+			    sc.exitRoom(roomNumber, userSession);
+			}
 		}
 	}
 	
 	@OnClose
 	public void handleClose(Session userSession) {
 		// 방에서 나가는 경우, 해당 인원의 세션 제거(유저가 아무도 없게 되면 방도 삭제)
-	    sc.exitRoom((String) userSession.getUserProperties().get("roomNumber"), userSession);
+	    sc.closeSocket((String) userSession.getUserProperties().get("roomNumber"), userSession);
 		
 		// 현재 소켓 접속자 현황 확인용 로그
 		System.out.println("[서버] 유저 나감");

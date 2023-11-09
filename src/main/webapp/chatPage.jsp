@@ -576,7 +576,27 @@
 					document.getElementById("resultValue").value = 0;
 				}
 				
-			}
+			} else if(jsonData.sign == "exit"){
+				/* 
+				* 나가기 버튼을 누른 경우
+					- [소켓] 해당 유저 소켓 제거
+					- [화면] 페이지 이동
+				*/
+				$.ajax({
+					type: "post",
+					async: true,
+					url: "updateRoom",
+					dataType: "text", 
+					data: {
+						username: '${login_user_name}',
+						roomNumber: jsonData.roomNumber
+					},
+					success: function(data, textStatus){
+						console.log('response: ' + data);
+					}
+				});
+				location.href = "wroom.do";
+			} 
 		}
 		// 소켓 서버에서 오는 메시지 - 에러
 		websocket.onerror = function(e){
@@ -618,7 +638,11 @@
 					websocket.send(JSON.stringify(message));
 				} else {
 					// 게임 중이 아닐 때 나간 경우, 페이지만 이동
-					location.href = "wroom.do";
+					var message = {
+						sign: "exit",
+						username: document.getElementsByClassName("userNickName")[1].innerHTML
+					}
+					websocket.send(JSON.stringify(message));
 				}
 			}
 		});
