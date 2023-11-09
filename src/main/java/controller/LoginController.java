@@ -29,8 +29,9 @@ public class LoginController implements Controller{
 		if (result) {
 			HttpSession session = request.getSession();
 			session.setAttribute("isLogOn", true);
-			session.setAttribute("login.user_name", request.getParameter("user_name"));
-			session.setAttribute("login.user_pw", request.getParameter("user_pw"));
+			session.setAttribute("login_user_name", request.getParameter("user_name"));
+			session.setAttribute("login_user_pw", request.getParameter("user_pw"));
+			System.out.println(session.getAttribute("login_user_name"));
 			return "redirect:/wroom.do";
 		} else {
 			//request.setAttribute("isLogOn", false);

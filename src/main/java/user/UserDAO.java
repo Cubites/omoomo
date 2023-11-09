@@ -44,7 +44,9 @@ public class UserDAO {
 			con.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
-		}
+		}finally {
+            resourceclose();
+        }
 	}
 	
 	public boolean isExisted(UserVO user) {
@@ -65,7 +67,9 @@ public class UserDAO {
 			System.out.println("result=" + result);
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
+		}finally {
+            resourceclose();
+        }
 		return result;
 	}
 	
@@ -85,13 +89,15 @@ public class UserDAO {
 			System.out.println("-->"+result);
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
+		}finally {
+            resourceclose();
+        }
 		
 		return result;
 	}
 	
 	
-	public synchronized List<UserVO> MemberList(String username){
+	public List<UserVO> MemberList(String username){
         System.out.println("dao호출");
         List<UserVO> list = new ArrayList<>();
         String sql ="select * from rank_view where user_name LIKE '%'||?||'%'";
@@ -115,6 +121,8 @@ public class UserDAO {
             
         }catch(Exception e) {
             e.printStackTrace();
+        }finally {
+            resourceclose();
         }
         return list;
     }
@@ -141,6 +149,22 @@ public class UserDAO {
             
         }catch(Exception e) {
             e.printStackTrace();
+        }finally {
+            resourceclose();
         }
+    }
+    
+    private void resourceclose() {
+        try {
+            if(rs != null)
+                rs.close();
+            if(pstmt != null)
+                pstmt.close();
+            if(con != null)
+                con.close();
+           
+            }catch(Exception e) {
+                e.printStackTrace();
+            }
     }
 }
