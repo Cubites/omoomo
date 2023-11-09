@@ -415,7 +415,7 @@
 				// $.ajax({
 				// 	type: "post",
 				// 	async: true,
-				// 	url: "http://localhost:8090/onoono/waitingRoom.jsp",
+				// 	url: "/omoomo/updateRoom",
 				// 	dataType: "json", 
 				// 	data: {
 				// 		username: jsonData,
@@ -540,23 +540,25 @@
 				}
 
 				/* 승패 결과를 보냄 */
-				// $.ajax({
-				// 	type: "post",
-				// 	async: true,
-				// 	url: "http://localhost:8090/onoono/waitingRoom.jsp",
-				// 	dataType: "json", 
-				// 	data: {
-				// 		win: jsonData.win,
-				// 		lost: jsonData.lose,
-				// 		username: jsonData,
-				// 		roomNumber: jsonData.roomNumber
-				// 	},
-				// 	success: function(data, textStatus){
-				// 		if(jsonData.sign == "run" && jsonData.win != '<%=session.getAttribute("username") %>'){
-				// 			location.href = "/WEB-INF/view/wroom.jsp";
-				// 		}
-				// 	}
-				// });
+				$.ajax({
+					type: "post",
+					async: true,
+					url: "winAndLose",
+					dataType: "text", 
+					data: {
+						win: jsonData.win,
+						lose: jsonData.lose,
+						username: '${session.getAttribute("login_user_name")}',
+						result: jsonData.win == '${session.getAttribute("login_user_name")}' ? "win" : "lose",
+						roomNumber: jsonData.roomNumber
+					},
+					success: function(data, textStatus){
+						console.log('response: ' + data);
+						if(jsonData.sign == "run" && jsonData.win != '<%=session.getAttribute("username") %>'){
+							location.href = "/WEB-INF/view/wroom.jsp";
+						}
+					}
+				});
 				
 			}
 		}
