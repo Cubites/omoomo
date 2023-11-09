@@ -26,6 +26,8 @@ public class ChatroomServerEndpoint {
 	
 	@OnOpen
 	public void handleOpen(EndpointConfig endpointConfig, Session userSession) {
+	    System.out.println("[OnOpen] username: " + endpointConfig.getUserProperties().get("username"));
+	    System.out.println("[OnOpen] roomNumber: " + endpointConfig.getUserProperties().get("roomNumber"));
 		// 세션에 이름과 방 번호 저장
 		userSession.getUserProperties().put("username", endpointConfig.getUserProperties().get("username"));
 		userSession.getUserProperties().put("roomNumber", endpointConfig.getUserProperties().get("roomNumber"));
@@ -36,7 +38,7 @@ public class ChatroomServerEndpoint {
 		sc.enterRoom(roomNumber, (Session) userSession);
 		boards.put(roomNumber, new Board());
 		// 현재 소켓 접속자 현황 확인용 로그
-		System.out.println("[서버] 유저 입장");
+		System.out.println("[OnOpen] 유저 입장");
 		sc.printRoomAndSockets();
 	}
 	
@@ -91,42 +93,11 @@ public class ChatroomServerEndpoint {
 			            boards.put(roomNumber, new Board());
 			            sc.gameEnd(roomNumber, userSession);
 			        }
-//			        Boolean checkFours = boards.get(roomNumber).fourLogic((int) userSession.getUserProperties().get("c"), stoneLocation);
-//			        System.out.println("사목 판정: " + checkFours);
+			        Boolean checkThree = boards.get(roomNumber).doubleThree((int) userSession.getUserProperties().get("c"), stoneLocation);
+			        System.out.println("33 판정: " + checkThree);
 			        
 			        
 			    }
-			    
-				// 받은 메시지가 돌을 놓은 좌표인 경우 - 놓은 좌포를 같은 방내 다른 사용자에게 전송
-				
-				// 전체(or 놓은 위치 주변) 오목판 정보를 받아 오목 판별
-				
-				/******** 여기에 오목 판별 로직 추가 ********/
-			    // stone color, stone location, stone area
-			    // stone xy: {x, y} = {horizon, vertical}
-			    /* 
-			     *  List<ArrayList<HashMap<String, Integer> stone area = 
-			        {
-			            {{h: 0, v: 4}, {h: 0, v: 4}, {h: 0, v: 4}, ...},
-                        {{h: 0, v: 4}, {h: 0, v: 4}, {h: 0, v: 4}, ...},
-			            ...
-		            }
-		            HashMap<String, Integer> stone location = {h: 0, v: 4}
-		            int stone_color =  -1 ? 1 // black = -1 , white = 1
-			     */
-			    // logic.win((Map) stone_color, (Map) stone_location, (List<ArrayList<HashMap<String, Integer>>) stone_area);
-				
-			    /*
-			     1. stone 5 ?
-			     2. Need stone 33 ?
-			         2-1. Yes! => check 33
-			         2-2. No! => pass
-			     3. stone 44 ?
-			         3-1. Yes! => check 44
-			         3-2. No! => pass
-			     */
-
-				
 			}
 		}
 	}

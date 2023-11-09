@@ -40,6 +40,8 @@ public class SocketConnection {
         } else if(userSockets.get(roomNumber).size() >= 2) {
             JSONObject json = new JSONObject();
             json.put("sign", "noSeat");
+            json.put("username", session.getUserProperties().get("username"));
+            json.put("roomNumber", roomNumber);
             try {
                 session.getBasicRemote().sendText(json.toString());
             } catch(Exception e) {
@@ -149,6 +151,7 @@ public class SocketConnection {
                 user.getUserProperties().put("c", 1);
             } else {
                 user.getUserProperties().put("c", -1);
+                json.put("lose", user.getUserProperties().get("username"));
             }
             try {
                 user.getBasicRemote().sendText(json.toString());

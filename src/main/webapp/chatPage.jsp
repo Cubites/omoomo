@@ -353,7 +353,7 @@
 
 				</div>
 				<div class="userNickName">
-					<%=session.getAttribute("username") %>
+					<%=session.getAttribute("login_user_name") %>
 				</div>
 				<div class="bowlImage" style="background-color: #252525">
 					<div class="bowlImageInside" style="background-color: #101010"></div>
@@ -412,27 +412,22 @@
 						- [화면] 대기 화면으로 자동 이동
 						- [서버] 나가면서 데이터(방 이름, 유저 이름)을 같이 보냄
 				*/
-
-				/* 방 이름, 유저 이름 데이터를 주면서 나간다고 요청 보냄 */
 				// $.ajax({
 				// 	type: "post",
 				// 	async: true,
 				// 	url: "http://localhost:8090/onoono/waitingRoom.jsp",
-				// 	dataType: "text", 
+				// 	dataType: "json", 
 				// 	data: {
-				// 		username: '<%=session.getAttribute("username") %>',
-				// 		result: jsonData.win == '<%=session.getAttribute("username") %>' ? "win" : "lose"
+				// 		username: jsonData,
+				// 		roomNumber: jsonData.roomNumber
 				// 	},
 				// 	success: function(data, textStatus){
-				// 		if(jsonData.sign == "run" && jsonData.win != '<%=session.getAttribute("username") %>'){
-				// 			location.href = "waitingRoom.jsp";
-				// 		} else {
-
-				// 		}
+				// 		location.href = "/WEB-INF/view/wroom.jsp";
 				// 	}
 				// });
 
-				location.href = "waitingRoom.jsp"; 
+				/* 방 이름, 유저 이름 데이터를 주면서 나간다고 요청 보냄 */
+				location.href = "/WEB-INF/view/wroom.jsp?";
 			} else if(jsonData.sign == "match") {
 				/* 
 					* 유저가 있는 방에 다른 유저가 입장했을 때
@@ -515,11 +510,9 @@
 				document.getElementById("cover").style.display = "flex";
 				readyButton.classList.remove("readyButtonActivate");
 
-				if(jsonData.sign == "run" && jsonData.win != '<%=session.getAttribute("username") %>'){
-					location.href = "waitingRoom.jsp";
-				} else if(jsonData.sign == "gameEnd"){
+				if(jsonData.sign == "gameEnd"){
 					let resultBox = document.getElementsByClassName("resultBox");
-					if('<%=session.getAttribute("username") %>' == jsonData.win){
+					if('<%=session.getAttribute("login_user_name") %>' == jsonData.win){
 						resultBox[0].innerText = "패";
 						resultBox[0].style.backgroundColor = "#C3A69A";
 						resultBox[0].style.display = "flex";
@@ -551,19 +544,20 @@
 				// 	type: "post",
 				// 	async: true,
 				// 	url: "http://localhost:8090/onoono/waitingRoom.jsp",
-				// 	dataType: "text", 
+				// 	dataType: "json", 
 				// 	data: {
-				// 		username: '<%=session.getAttribute("username") %>',
-				// 		result: jsonData.win == '<%=session.getAttribute("username") %>' ? "win" : "lose"
+				// 		win: jsonData.win,
+				// 		lost: jsonData.lose,
+				// 		username: jsonData,
+				// 		roomNumber: jsonData.roomNumber
 				// 	},
 				// 	success: function(data, textStatus){
 				// 		if(jsonData.sign == "run" && jsonData.win != '<%=session.getAttribute("username") %>'){
-				// 			location.href = "waitingRoom.jsp";
-				// 		} else {
-
+				// 			location.href = "/WEB-INF/view/wroom.jsp";
 				// 		}
 				// 	}
 				// });
+				
 			}
 		}
 		// 소켓 서버에서 오는 메시지 - 에러
@@ -606,7 +600,7 @@
 					websocket.send(JSON.stringify(message));
 				} else {
 					// 게임 중이 아닐 때 나간 경우, 페이지만 이동
-					location.href = "./waitingRoom.jsp";
+					location.href = "/WEB-INF/view/wroom.jsp";
 				}
 			}
 		});

@@ -69,7 +69,7 @@ public class Board {
         this.board.get(v).get(h).put("c", c);
     }
     
-    // 오목인지 판별
+    // 오목 판별
     public boolean win(int stoneColor, Map<String, Integer> stoneLocation){    
         int color;
         int x = stoneLocation.get("h"); //stone location = {h: 0, v: 0} 오목판의 좌표
@@ -106,6 +106,63 @@ public class Board {
             if(cnt==5){
                 return true;
             }
+        }
+        return false;
+    }
+    
+    // 33 판별
+    public boolean doubleThree(int stoneColor, Map<String, Integer> stoneLocation){
+
+        int color;
+        int x = stoneLocation.get("h"); //stone location = {h: 0, v: 0} 오목판의 좌표
+        int y = stoneLocation.get("v");
+        
+        
+        // 8방향 ( 오른쪽, 오른쪽 아래, 아래, 왼쪽 아래, 왼쪽, 왼쪽 위, 위, 오른쪽 위 )
+        int[][] dxy = {{0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}};
+        
+        
+        // 각 방향으로 쭉 가보면서 3개가 되면, 한번 더 가보고 비어있는지 확인 & 원래 좌표에서 반대 방향으로 한칸 갔을 때 비어있는지 확인
+        int cnt = 0;
+        for (int i=0; i < dxy.length; i++) {
+           // 다음 위치
+           int nx = x + dxy[i][0];
+           int ny = y + dxy[i][1];
+           // 이 방향으로 3개가 되는 지 확인
+           int triple = 1;
+           System.out.println("33확인1 " + i);
+           System.out.println("33확인1 " + stoneColor);
+           while (isInRange(nx, ny, board.size(), board.get(0).size()) && board.get(ny).get(nx).get("c") == stoneColor) {
+               System.out.println("33확인2 " + nx);
+               System.out.println("33확인2 " + ny);
+              triple += 1;
+              nx += dxy[i][0];
+              ny += dxy[i][1];
+           }
+           // 다음 위치가 범위를 벗어나거나 색이 다르면 반복 끝
+           // 이 때 3개인지 확인
+           // 3개라면 한번 더 가봤을 때 비어있는지 & 원래 위치에서 반대로 한칸 갔을 때 비어있는지 확인
+           if (triple == 3) {
+               System.out.println("33확인3");
+              if (isInRange(nx, ny, board.size(), board.get(0).size()) 
+                    && board.get(ny).get(nx).get("c") == 0) {
+                  System.out.println("33확인4");
+                 // 반대 방향
+                 int d = (i + 4) % 8;
+                 System.out.println(i);
+                 int rev_x = x + dxy[d][0];
+                 int rev_y = y + dxy[d][1];
+                 if (isInRange(rev_x, rev_y, board.size(), board.get(0).size()) 
+                        && board.get(ny).get(nx).get("c") == 0) {
+                    cnt += 1;
+                    System.out.println("d: " + d + " / " + cnt);
+                 }
+              }
+           }
+        }
+        // 모든 방향을 다 봤을 때, 조건에 맞는 방향이 2개 이상이라면 33 조건 성립
+        if (cnt >= 2) {
+           return true;
         }
         return false;
     }

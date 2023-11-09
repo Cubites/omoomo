@@ -8,3 +8,4 @@
     * jstl: https://mvnrepository.com/artifact/javax.servlet/jstl/1.2
     * gson(2.8.5):https://mvnrepository.com/artifact/com.google.code.gson/gson/2.8.5
     * ojdbc8-23.2 : https://mvnrepository.com/artifact/com.oracle.database.jdbc/ojdbc8/23.2.0.0 
+    * lombok : https://mvnrepository.com/artifact/org.projectlombok/lombok/1.18.30

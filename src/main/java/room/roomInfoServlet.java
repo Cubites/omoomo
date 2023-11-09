@@ -38,9 +38,9 @@ public class roomInfoServlet extends HttpServlet {
 		HttpSession httpSession = request.getSession();
 
 
-		httpSession.setAttribute("roomNum", num);
+		httpSession.setAttribute("roomNumber", num);
 		
-		System.out.println("httpSession.getAttribute: "+httpSession.getAttribute("roomNum"));
+		System.out.println("httpSession.getAttribute: "+httpSession.getAttribute("roomNumber"));
 		
 		if(num != null) {
 			dispatcher.forward(request, response);
