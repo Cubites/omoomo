@@ -517,16 +517,29 @@
 					url: "winAndLose",
 					dataType: "text", 
 					data: {
-						username: '${session.getAttribute("login_user_name")}',
-						result: jsonData.win == '${session.getAttribute("login_user_name")}' ? "win" : "lose"
+						username: '${login_user_name}',
+						result: jsonData.win == '${login_user_name}' ? "win" : "lose"
 					},
 					success: function(data, textStatus){
 						console.log('response: ' + data);
-						if(jsonData.sign == "run" && jsonData.win != '<%=session.getAttribute("username") %>'){
-							location.href = "/WEB-INF/view/wroom.jsp";
-						}
 					}
 				});
+				if(jsonData.sign == "run" && jsonData.lose != '<%=session.getAttribute("username") %>'){
+					$.ajax({
+						type: "post",
+						async: true,
+						url: "updateRoom",
+						dataType: "text", 
+						data: {
+							username: '${login_user_name}',
+							roomNumber: jsonData.roomNumber
+						},
+						success: function(data, textStatus){
+							console.log('response: ' + data);
+						}
+					});
+					location.href = "wroom.do";
+				}
 
 				let resultBox = document.getElementsByClassName("resultBox");
 				if('<%=session.getAttribute("login_user_name") %>' == jsonData.win){
@@ -597,7 +610,7 @@
 					websocket.send(JSON.stringify(message));
 				} else {
 					// 게임 중이 아닐 때 나간 경우, 페이지만 이동
-					location.href = "/WEB-INF/view/wroom.jsp";
+					location.href = "wroom.do";
 				}
 			}
 		});

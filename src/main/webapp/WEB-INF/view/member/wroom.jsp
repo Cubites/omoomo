@@ -767,7 +767,7 @@
                     <!-- 모드 값에 따라 모드 출력 -->
 
                     <!-- 인원수 출력  뒤는 고정 앞은 현재 방(세션)접속 인원 받아와서 업데이트-->
-                    <div id="roomUserNumber">2 / 2</div>
+                    <div id="roomUserNumber">${ roomMap.get(key).peopleNum} / 2</div>
                     <!-- 인원수 출력 -->
                   </div>
                 </div>

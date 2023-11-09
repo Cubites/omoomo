@@ -166,6 +166,7 @@ public class SocketConnection {
         JSONObject json = new JSONObject();
         json.put("sign", "run");
         json.put("ready", false);
+        json.put("roomNumber", roomNumber);
         for(Session user : userSockets.get(roomNumber)) {
             if(username.equals(user.getUserProperties().get("username"))) {
                 json.put("lose", username);
