@@ -38,7 +38,13 @@ public class SocketConnection {
             session.getUserProperties().put("ready", false);
             userSockets.put(roomNumber, new HashSet<Session>(Arrays.asList(session)));
         } else if(userSockets.get(roomNumber).size() >= 2) {
-            
+            JSONObject json = new JSONObject();
+            json.put("sign", "noSeat");
+            try {
+                session.getBasicRemote().sendText(json.toString());
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
         } else {
             // 방이 있는 경우 입장
             for(Session user : userSockets.get(roomNumber)) {
@@ -63,17 +69,7 @@ public class SocketConnection {
             }
         }
     }
-    
-    // 방 나감
-    public void exitRoom(Session session) {
-        userSockets.get(session.getUserProperties().get("roomNumber")).remove(session);
-        
-        // 방에 아무도 없으면 방도 삭제
-        if(userSockets.get(session.getUserProperties().get("roomNumber")).size() == 0) {
-            userSockets.remove(session.getUserProperties().get("roomNumber"));
-        }
-    }
-    
+
     // 초기값 설정
     public void setInit(Session userSession) {
         JSONObject resMessage = new JSONObject();
@@ -143,14 +139,30 @@ public class SocketConnection {
     }
     
     // 승패 여부 전송
-    public boolean checkOmok() {
-        return true;
+    public void gameEnd(String roomNumber, Session session) {
+        JSONObject json = new JSONObject();
+        json.put("sign", "gameEnd");
+        json.put("win", session.getUserProperties().get("username"));
+        userSockets.get(roomNumber).stream().forEach(user -> {
+            user.getUserProperties().put("ready", false);
+            if(user.getUserProperties().get("username").equals(session.getUserProperties().get("username"))) {
+                user.getUserProperties().put("c", 1);
+            } else {
+                user.getUserProperties().put("c", -1);
+            }
+            try {
+                user.getBasicRemote().sendText(json.toString());
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
     
     // 승패 여부 전송 - 게임 중 나간 경우
     public void runGame(String roomNumber, String username) {
         JSONObject json = new JSONObject();
         json.put("sign", "run");
+        json.put("ready", false);
         for(Session user : userSockets.get(roomNumber)) {
             if(username.equals(user.getUserProperties().get("username"))) {
                 json.put("lose", username);
@@ -159,11 +171,22 @@ public class SocketConnection {
             }
         }
         userSockets.get(roomNumber).stream().forEach(user -> {
+            user.getUserProperties().put("ready", false);
             try{
                 user.getBasicRemote().sendText(json.toString());
             } catch(Exception e) {
                 e.printStackTrace();
             }
         });
+    }
+    
+    // 방 나감
+    public void exitRoom(Session session) {
+        userSockets.get(session.getUserProperties().get("roomNumber")).remove(session);
+        
+        // 방에 아무도 없으면 방도 삭제
+        if(userSockets.get(session.getUserProperties().get("roomNumber")).size() == 0) {
+            userSockets.remove(session.getUserProperties().get("roomNumber"));
+        }
     }
 }

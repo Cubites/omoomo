@@ -16,6 +16,7 @@ import org.json.JSONObject;
 import socket.Board;
 import socket.SocketConnection;
 
+//@ServerEndpoint("/chatroomServerEndpoint")
 @ServerEndpoint(value="/chatroomServerEndpoint", configurator=ChatroomServerconfigurator.class)
 public class ChatroomServerEndpoint {
 	// 방과 유저 정보
@@ -57,25 +58,43 @@ public class ChatroomServerEndpoint {
             } else if("run".equals(reqMessage.getString("sign"))) {
                 // 게임 중 방을 나가는 경우
                 sc.runGame(roomNumber, username);
-                
-                
             } else if("chat".equals(reqMessage.getString("sign"))) {
                 // 받은 메시지가 채팅 메시지 인 경우 - 채팅 메시지를 같은 방내 다른 사용자에게 전송
                 sc.sendMessage(roomNumber, username, reqMessage.getString("m"));
-            } else if("stone".equals(reqMessage.getString("sign"))){
+            } else if("game".equals(reqMessage.getString("sign"))){
                 int h = reqMessage.getInt("h");
                 int v = reqMessage.getInt("v");
                 
-                // 놓은 위치에 이미 돌이 있는지 없는지 확인
-                if(boards.get(roomNumber).checkOne(h, v)) {
+                // 놓은 위치에 이미 돌이 있는지 없는지 & 본인 차례가 맞는지 확인
+                if(boards.get(roomNumber).checkOne(h, v) && boards.get(roomNumber).checkTurn((int) userSession.getUserProperties().get("c"))) {
 			        boards.get(roomNumber).setStone(h, v, (int) userSession.getUserProperties().get("c"));
 			        Map<String, Integer> stoneLocation = new HashMap<>();
 			        stoneLocation.put("h", h);
 			        stoneLocation.put("v", v);
 			        Boolean winLose = boards.get(roomNumber).win((int) userSession.getUserProperties().get("c"), stoneLocation);
 			        System.out.println("오목 판정: " + winLose);
+			        
+			        // 놓은 위치 값을 같은 방내 다른 사람에게 전송
+                    JSONObject resMessage = new JSONObject();
+                    resMessage.put("sign", "game");
+                    resMessage.put("h", reqMessage.getInt("h"));
+                    resMessage.put("v", reqMessage.getInt("v"));
+                    resMessage.put("c", userSession.getUserProperties().get("c"));
+                    sc.getUserSockets().get((String) roomNumber).stream().forEach(x -> {
+                        try{
+                            x.getBasicRemote().sendText(resMessage.toString());
+                        } catch(Exception e) {
+                            e.printStackTrace();
+                        }
+                    });
+			        if(winLose) {
+			            boards.put(roomNumber, new Board());
+			            sc.gameEnd(roomNumber, userSession);
+			        }
 //			        Boolean checkFours = boards.get(roomNumber).fourLogic((int) userSession.getUserProperties().get("c"), stoneLocation);
 //			        System.out.println("사목 판정: " + checkFours);
+			        
+			        
 			    }
 			    
 				// 받은 메시지가 돌을 놓은 좌표인 경우 - 놓은 좌포를 같은 방내 다른 사용자에게 전송
@@ -107,19 +126,7 @@ public class ChatroomServerEndpoint {
 			         3-2. No! => pass
 			     */
 
-				// 판별 결과와 놓은 위치 값을 같은 방내 다른 사람에게 전송
-				JSONObject resMessage = new JSONObject();
-				resMessage.put("sign", "game");
-                resMessage.put("h", reqMessage.getInt("h"));
-                resMessage.put("v", reqMessage.getInt("v"));
-                resMessage.put("c", userSession.getUserProperties().get("c"));
-				sc.getUserSockets().get((String) roomNumber).stream().forEach(x -> {
-					try{
-						x.getBasicRemote().sendText(resMessage.toString());
-					} catch(Exception e) {
-						e.printStackTrace();
-					}
-				});
+				
 			}
 		}
 	}

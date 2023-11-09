@@ -8,9 +8,26 @@ import java.util.Map;
 public class Board {
     private List<List<Map<String, Integer>>> board = new ArrayList<>();
     private int size;
+    private int stoneCount;
     
     public Board() {
+        stoneCount = 0;
         size = 19;
+        for(int i=0; i<size; i++) {
+            board.add(new ArrayList<>());
+            for(int j=0; j<size; j++) {
+                Map<String, Integer> temp = new HashMap<>();
+                temp.put("h", 0);
+                temp.put("v", 0);
+                temp.put("c", 0);
+                board.get(i).add(temp);
+            }
+        }
+    }
+    
+    public Board(int size) {
+        stoneCount = 0;
+        this.size = size;
         for(int i=0; i<size; i++) {
             board.add(new ArrayList<>());
             for(int j=0; j<size; j++) {
@@ -30,6 +47,21 @@ public class Board {
     // 놓인 돌이 있는지 없는지 확인
     public boolean checkOne(int h, int v) {
         return board.get(v).get(h).get("c") == 0;
+    }
+    
+    // 순서 판별
+    public boolean checkTurn(int c) {
+        System.out.println(c == -1 ? "Black Stone" : "White Stone");
+        System.out.println(stoneCount % 2 == 1 ? "White Turn" : "Black Turn");
+        if(stoneCount % 2 == 1 && c == 1) {
+            stoneCount++;
+            return true;
+        } else if(stoneCount % 2 == 0 && c == -1) {
+            stoneCount++;
+            return true;
+        }
+        System.out.println("올바르지 않는 턴");
+        return false;
     }
     
     // 돌을 놓음
