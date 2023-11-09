@@ -9,6 +9,7 @@ public class RoomVO {
     private String name;
     private String mode;
     private String owner;
+    private int peopleNum;
     //private Set<Session> users;
     
     public String genRoomNumber() {

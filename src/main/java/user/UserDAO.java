@@ -129,11 +129,12 @@ public class UserDAO {
         String sql2 = "update user_table set user_score = round((user_win*3)*0.6+(user_lose*-1)*0.3+(user_win+user_lose)*0.1)";
 
         try {
+            System.out.println("win username: " + username);
 
             pstmt = con.prepareStatement(sql1);
             pstmt.setString(1, username);
-            pstmt.executeUpdate();
-
+            int a = pstmt.executeUpdate();
+            System.out.println("win set result: " + a);
             con.prepareStatement(sql2).executeUpdate();
 
         } catch (Exception e) {
@@ -149,10 +150,12 @@ public class UserDAO {
         String sql2 = "update user_table set user_score = round((user_win*3)*0.6+(user_lose*-1)*0.3+(user_win+user_lose)*0.1)";
 
         try {
-
+            System.out.println("lose username: " + username);
             pstmt = con.prepareStatement(sql1);
             pstmt.setString(1, username);
-            pstmt.executeUpdate();
+            int a = pstmt.executeUpdate();
+            System.out.println("lose set result: " + a);
+            
             con.prepareStatement(sql2).executeUpdate();
 
         } catch (Exception e) {

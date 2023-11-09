@@ -412,19 +412,19 @@
 						- [화면] 대기 화면으로 자동 이동
 						- [서버] 나가면서 데이터(방 이름, 유저 이름)을 같이 보냄
 				*/
-				// $.ajax({
-				// 	type: "post",
-				// 	async: true,
-				// 	url: "/omoomo/updateRoom",
-				// 	dataType: "json", 
-				// 	data: {
-				// 		username: jsonData,
-				// 		roomNumber: jsonData.roomNumber
-				// 	},
-				// 	success: function(data, textStatus){
-				// 		location.href = "/WEB-INF/view/wroom.jsp";
-				// 	}
-				// });
+				$.ajax({
+					type: "post",
+					async: true,
+					url: "updateRoom",
+					dataType: "json", 
+					data: {
+						username: jsonData,
+						roomNumber: jsonData.roomNumber
+					},
+					success: function(data, textStatus){
+						location.href = "/WEB-INF/view/wroom.jsp";
+					}
+				});
 
 				/* 방 이름, 유저 이름 데이터를 주면서 나간다고 요청 보냄 */
 				location.href = "/WEB-INF/view/wroom.jsp?";
@@ -510,35 +510,6 @@
 				document.getElementById("cover").style.display = "flex";
 				readyButton.classList.remove("readyButtonActivate");
 
-				if(jsonData.sign == "gameEnd"){
-					let resultBox = document.getElementsByClassName("resultBox");
-					if('<%=session.getAttribute("login_user_name") %>' == jsonData.win){
-						resultBox[0].innerText = "패";
-						resultBox[0].style.backgroundColor = "#C3A69A";
-						resultBox[0].style.display = "flex";
-						resultBox[1].innerText = "승";
-						resultBox[1].style.backgroundColor = "#61493f";
-						resultBox[1].style.display = "flex";
-						document.getElementsByClassName("bowlImage")[0].style.backgroundColor = "#252525";
-						document.getElementsByClassName("bowlImage")[1].style.backgroundColor = "#e8e8e8";
-						document.getElementsByClassName("bowlImageInside")[0].style.backgroundColor = "#101010";
-						document.getElementsByClassName("bowlImageInside")[1].style.backgroundColor = "#bbbbbb";
-						document.getElementById("resultValue").value = 1;
-					} else {
-						resultBox[0].innerText = "승";
-						resultBox[0].style.backgroundColor = "#61493f";
-						resultBox[0].style.display = "flex";
-						resultBox[1].innerText = "패";
-						resultBox[1].style.backgroundColor = "#C3A69A";
-						resultBox[1].style.display = "flex";
-						document.getElementsByClassName("bowlImage")[0].style.backgroundColor = "#e8e8e8";
-						document.getElementsByClassName("bowlImage")[1].style.backgroundColor = "#252525";
-						document.getElementsByClassName("bowlImageInside")[0].style.backgroundColor = "#bbbbbb";
-						document.getElementsByClassName("bowlImageInside")[1].style.backgroundColor = "#101010";
-						document.getElementById("resultValue").value = 0;
-					}
-				}
-
 				/* 승패 결과를 보냄 */
 				$.ajax({
 					type: "post",
@@ -546,11 +517,8 @@
 					url: "winAndLose",
 					dataType: "text", 
 					data: {
-						win: jsonData.win,
-						lose: jsonData.lose,
 						username: '${session.getAttribute("login_user_name")}',
-						result: jsonData.win == '${session.getAttribute("login_user_name")}' ? "win" : "lose",
-						roomNumber: jsonData.roomNumber
+						result: jsonData.win == '${session.getAttribute("login_user_name")}' ? "win" : "lose"
 					},
 					success: function(data, textStatus){
 						console.log('response: ' + data);
@@ -559,6 +527,33 @@
 						}
 					}
 				});
+
+				let resultBox = document.getElementsByClassName("resultBox");
+				if('<%=session.getAttribute("login_user_name") %>' == jsonData.win){
+					resultBox[0].innerText = "패";
+					resultBox[0].style.backgroundColor = "#C3A69A";
+					resultBox[0].style.display = "flex";
+					resultBox[1].innerText = "승";
+					resultBox[1].style.backgroundColor = "#61493f";
+					resultBox[1].style.display = "flex";
+					document.getElementsByClassName("bowlImage")[0].style.backgroundColor = "#252525";
+					document.getElementsByClassName("bowlImage")[1].style.backgroundColor = "#e8e8e8";
+					document.getElementsByClassName("bowlImageInside")[0].style.backgroundColor = "#101010";
+					document.getElementsByClassName("bowlImageInside")[1].style.backgroundColor = "#bbbbbb";
+					document.getElementById("resultValue").value = 1;
+				} else {
+					resultBox[0].innerText = "승";
+					resultBox[0].style.backgroundColor = "#61493f";
+					resultBox[0].style.display = "flex";
+					resultBox[1].innerText = "패";
+					resultBox[1].style.backgroundColor = "#C3A69A";
+					resultBox[1].style.display = "flex";
+					document.getElementsByClassName("bowlImage")[0].style.backgroundColor = "#e8e8e8";
+					document.getElementsByClassName("bowlImage")[1].style.backgroundColor = "#252525";
+					document.getElementsByClassName("bowlImageInside")[0].style.backgroundColor = "#bbbbbb";
+					document.getElementsByClassName("bowlImageInside")[1].style.backgroundColor = "#101010";
+					document.getElementById("resultValue").value = 0;
+				}
 				
 			}
 		}

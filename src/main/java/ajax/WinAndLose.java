@@ -38,6 +38,8 @@ public class WinAndLose extends HttpServlet {
         UserDAO dao = new UserDAO();
         String username = request.getParameter("username");
         String result = request.getParameter("result");
+        
+        System.out.println(username +  "  " + result);
 
         if ("win".equalsIgnoreCase(result)) {
             dao.winRecord(username);

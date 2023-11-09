@@ -75,10 +75,22 @@
       });
 
       $(".roomWrap").on("click", function () {
-        var num = $(this).find("#num").val();
-        console.log(num);
+        var userCntTxt = $(this).find("#roomUserNumber").text().replace(" / 2", "");
+        var userCnt = parseInt(userCntTxt, 10);
+        console.log(userCnt);
+        
+        if(userCnt==2){
+            alert("입장할 수 없습니다.")
+        }else{
+          var num = $(this).find("#num").val();
+          var mode = $(this).find("#rules").data("value");
+          //var mode = $("#rules", this).data("value");
+          
+          location.href = "/omoomo/roomInfo?num=" + num + "&mode=" + mode;
+            
+        }
 
-        location.href = "/omoomo/roomInfo?num=" + num;
+        // location.href = "/omoomo/roomInfo?num=" + num;
         // $.ajax({
         //   type: "POST",
         //   url: "roomInfo",
