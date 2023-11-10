@@ -1,0 +1,158 @@
+*{
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+#container {
+	background-image: url('./images/login_background.png');
+	width: 100%;
+	height: 100vh;
+	background-repeat: no-repeat;
+	background-size: contain;
+	background-position: center;
+	align-items: center;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+#main_logo {
+	background-image: url('./images/logo_login.png');
+	background-position: 50% 50%;
+	/* position: absolute; */
+	width: 1066px;
+	height: 231px;
+
+	font-family: 'Baloo Chettan';
+	font-style: normal;
+	font-weight: 400;
+	font-size: 220px;
+	line-height: 317px;
+	display: flex;
+	align-items: center;
+	text-align: center;
+
+	color: rgba(255, 255, 255, 0.9);
+
+	text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+
+}
+
+#login_form {
+
+	box-sizing: border-box;
+
+	width: 50%;
+	height: 240px;
+	min-width: 580px;
+	min-height: 220px;
+
+	background: #916D5E;
+	/* border: 1px solid #000000; */
+	/* Blur for 3D */
+	box-shadow: inset -8px -8px 10px rgba(0, 0, 0, 0.25), inset 8px 8px 10px rgba(255, 255, 255, 0.25);
+	border-radius: 20px;
+
+	display: flex;
+	flex-direction: row;
+	justify-content: space-around;
+	align-items: center;
+	padding: 1%;
+	margin-top: 45px;
+	margin-right: 100px;
+}
+
+#user_name {
+	width: 85%;
+	height: 58px;
+	left: 1021px;
+	top: 497px;
+	
+	background: #FFFFFF;
+	border-radius: 20px;
+	padding-left: 5%;
+	font-size:medium;
+    font-weight:bold;
+
+}
+
+
+#user_pw {
+	width: 85%;
+	height: 58px;
+	left: 1021px;
+	top: 581px;
+	
+	background: #FFFFFF;
+	border-radius: 20px;
+	padding-left: 5%;
+	font-size:medium;
+    font-weight:bold;
+	
+}
+
+#loginBtn_div {
+	width: 35%;
+	height: 50%;
+	
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items:center;
+	/* margin-left: 30px; */
+}
+
+#login_btn {
+	width: 60%;
+	height: 100%;
+	
+	background: #C3A69A;
+	border-radius: 20px;
+	font-size:larger;
+    font-weight: bolder;
+	cursor: pointer;
+	
+}
+
+#name_pw {
+	width: 70%;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: end;
+}
+
+#main {
+	display: flex;
+	width: 100%;
+}
+
+#first {
+	width: 50%;
+}
+
+#second {
+	width: 50%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin-top: 40px;
+}
+
+#signup_link {
+	display: flex;
+    width: 45%;
+    justify-content: space-between;
+	font-size:larger;
+    font-weight: bolder;
+	margin-right: 60px;
+}
+
+a:link{
+	color: brown;
+}
+
+a:hover{
+	color: blanchedalmond;
+}

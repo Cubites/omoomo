@@ -1,6 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-
+<%@ page import="room.*" %>
+<%@ page import="java.util.List" %>
+<%@ page import="user.UserVO" %>
+<%
+   RoomMap map = RoomMap.getRoomMap();
+   request.setAttribute("map", map);
+%>
 <!DOCTYPE html>
 <html>
 
@@ -86,7 +92,12 @@
           var mode = $(this).find("#rules").data("value");
           //var mode = $("#rules", this).data("value");
           
-          location.href = "/omoomo/roomInfo?num=" + num + "&mode=" + mode;
+          //추가 유저명 잘 들어감
+          var username="${login_user_name}";
+          alert(username);
+          console.log(mode + num);
+          location.href = "/omoomo/roomInfo?num=" + num + "&mode=" + mode+"&username="+username;
+            
             
         }
 
@@ -142,8 +153,8 @@
           var member = result;
           var html = "";
           var idx;
-          if (member.length > 10) {
-            idx = 10;
+          if (member.length > 7) {
+            idx = 7;
           } else {
             idx = member.length
           }
@@ -685,11 +696,13 @@
                 <input type="radio" id="mode2" name="mode" value="33" />
                 <span class="on"></span>
               </label>
+              <!-- 
               <label for="mode3" class="radio_box">
                 44 금지
                 <input type="radio" id="mode3" name="mode" value="44" />
                 <span class="on"></span>
               </label>
+               -->
             </div>
             <br>
           </div>
@@ -746,7 +759,32 @@
       <div id="roomboxWrap">
         <div id="roomlist">
           <!-- 방 디자인(반복) -->
-          <c:forEach var="key" items="${applicationScope.keySet}">
+          <c:forEach var="key" items="${map.keySet()}">
+            <div id="room">
+              <div class="roomWrap">
+                <input type="hidden" id="num" value="${roomMap.get(key).num}">
+                <img src="./images/notstart.png">
+                <div id="roomInfo">
+                  <div id="roomname">${key}</div>
+                  <div id="roomInfoBottom">
+                    <!-- 모드 값에 따라 모드 출력 -->
+                    <c:if test="${map.get(key).mode =='classic'}">
+                       <div id="rules" data-value="classic">기본 오목</div>
+                    </c:if>
+                    <c:if test="${map.get(key).mode =='33'}">
+                       <div id="rules" data-value="33">33 금지</div>
+                    </c:if>
+                    <!-- 모드 값에 따라 모드 출력 -->
+
+                    <!-- 인원수 출력  뒤는 고정 앞은 현재 방(세션)접속 인원 받아와서 업데이트-->
+                    <div id="roomUserNumber">${map.get(key).userlist.size()} / 2</div>
+                    <!-- 인원수 출력 -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </c:forEach>
+          <!-- <c:forEach var="key" items="${applicationScope.keySet}">
             <div id="room">
               <div class="roomWrap">
                 <input type="hidden" id="num" value="${roomMap.get(key).num}">
@@ -754,31 +792,28 @@
                 <div id="roomInfo">
                   <div id="roomname">${roomMap.get(key).name}</div>
                   <div id="roomInfoBottom">
-                    <!-- 모드 값에 따라 모드 출력 -->
+                    모드 값에 따라 모드 출력
                     <c:if test="${ roomMap.get(key).mode =='classic'}">
-                      <div id="rules">기본 오목</div>
+                       <div id="rules" data-value="classic">기본 오목</div>
                     </c:if>
                     <c:if test="${ roomMap.get(key).mode =='33'}">
-                      <div id="rules">33 금지</div>
+                       <div id="rules" data-value="33">33 금지</div>
                     </c:if>
-                    <c:if test="${ roomMap.get(key).mode =='44'}">
-                      <div id="rules">44 금지</div>
-                    </c:if>
-                    <!-- 모드 값에 따라 모드 출력 -->
+                    모드 값에 따라 모드 출력
 
-                    <!-- 인원수 출력  뒤는 고정 앞은 현재 방(세션)접속 인원 받아와서 업데이트-->
+                    인원수 출력  뒤는 고정 앞은 현재 방(세션)접속 인원 받아와서 업데이트
                     <div id="roomUserNumber">${ roomMap.get(key).peopleNum} / 2</div>
-                    <!-- 인원수 출력 -->
+                    인원수 출력
                   </div>
                 </div>
               </div>
             </div>
-          </c:forEach>
+          </c:forEach> -->
           <!-- /방 디자인(반복) -->
         </div>
         <div id="roombuttons">
           <div id="roomMakeButton" class="textCenter">방 만들기</div>
-          <div id="roomEnterButton" class="textCenter">빠른 시작</div>
+          <!--  <div id="roomEnterButton" class="textCenter">빠른 시작</div> -->
         </div>
       </div>
     </div>

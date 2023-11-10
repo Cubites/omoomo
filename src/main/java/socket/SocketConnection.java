@@ -10,6 +10,8 @@ import javax.websocket.Session;
 
 import org.json.JSONObject;
 
+import room.RoomMap;
+
 public class SocketConnection {
     // String = 방 번호, Set = 방에 있는 유저 목록, Session = 유저, c = 돌 색
     private Map<String, Set<Session>> userSockets = new HashMap<>();
@@ -34,6 +36,10 @@ public class SocketConnection {
     public void enterRoom(String roomNumber, Session session) {
         if(userSockets.get(roomNumber) == null) {
             // 방이 없는 경우 생성 및 입장
+            RoomMap roomMap = RoomMap.getRoomMap();
+
+            roomMap.get(roomNumber).addUser((String) session.getUserProperties().get("username"));
+            
             session.getUserProperties().put("c",  -1);
             session.getUserProperties().put("ready", false);
             userSockets.put(roomNumber, new HashSet<Session>(Arrays.asList(session)));
@@ -141,17 +147,29 @@ public class SocketConnection {
     }
     
     // 승패 여부 전송
-    public void gameEnd(String roomNumber, Session session) {
+    public void gameEnd(String roomNumber, Session session, Boolean winLose) {
         JSONObject json = new JSONObject();
         json.put("sign", "gameEnd");
-        json.put("win", session.getUserProperties().get("username"));
+        
+        
         userSockets.get(roomNumber).stream().forEach(user -> {
             user.getUserProperties().put("ready", false);
-            if(user.getUserProperties().get("username").equals(session.getUserProperties().get("username"))) {
-                user.getUserProperties().put("c", 1);
+            if(winLose) {
+                if(user.getUserProperties().get("username").equals(session.getUserProperties().get("username"))) {
+                    user.getUserProperties().put("c", 1);
+                    json.put("win", user.getUserProperties().get("username"));
+                } else {
+                    user.getUserProperties().put("c", -1);
+                    json.put("lose", user.getUserProperties().get("username"));
+                }
             } else {
-                user.getUserProperties().put("c", -1);
-                json.put("lose", user.getUserProperties().get("username"));
+                if(user.getUserProperties().get("username").equals(session.getUserProperties().get("username"))) {
+                    user.getUserProperties().put("c", -1);
+                    json.put("lose", user.getUserProperties().get("username"));
+                } else {
+                    user.getUserProperties().put("c", 1);
+                    json.put("win", user.getUserProperties().get("username"));
+                }
             }
             try {
                 user.getBasicRemote().sendText(json.toString());
@@ -185,6 +203,9 @@ public class SocketConnection {
     }
     
     public void exitRoom(String roomNumber, Session session){
+        RoomMap roomMap = RoomMap.getRoomMap();
+        roomMap.get(roomNumber).removeUser((String) session.getUserProperties().get("username"));
+        
         JSONObject json = new JSONObject();
         json.put("sign", "exit");
         json.put("username", session.getUserProperties().get("username"));
@@ -198,6 +219,12 @@ public class SocketConnection {
     
     // 소켓 끊김
     public void closeSocket(String roomNumber, Session session) {
+        RoomMap roomMap = RoomMap.getRoomMap();
+        
+        roomMap.get(roomNumber).removeUser((String) session.getUserProperties().get("username"));
+        if(roomMap.get(roomNumber).getUserlist().size() == 0) {
+            roomMap.remove(roomNumber);
+        }
         
         userSockets.get(session.getUserProperties().get("roomNumber")).remove(session);
         

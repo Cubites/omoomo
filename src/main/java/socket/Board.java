@@ -9,10 +9,27 @@ public class Board {
     private List<List<Map<String, Integer>>> board = new ArrayList<>();
     private int size;
     private int stoneCount;
+    private String mode;
     
     public Board() {
         stoneCount = 0;
         size = 19;
+        for(int i=0; i<size; i++) {
+            board.add(new ArrayList<>());
+            for(int j=0; j<size; j++) {
+                Map<String, Integer> temp = new HashMap<>();
+                temp.put("h", 0);
+                temp.put("v", 0);
+                temp.put("c", 0);
+                board.get(i).add(temp);
+            }
+        }
+    }
+    
+    public Board(String mode) {
+        stoneCount = 0;
+        size = 19;
+        this.mode = mode;
         for(int i=0; i<size; i++) {
             board.add(new ArrayList<>());
             for(int j=0; j<size; j++) {
@@ -38,6 +55,10 @@ public class Board {
                 board.get(i).add(temp);
             }
         }
+    }
+    
+    public String getMode() {
+        return mode;
     }
     
     public List<List<Map<String, Integer>>> getBoard() {

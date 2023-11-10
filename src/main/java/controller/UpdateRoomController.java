@@ -1,22 +1,20 @@
 package controller;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
+import room.RoomMap;
 import room.RoomVO;
 
 public class UpdateRoomController implements Controller {
     
-    Map<String, RoomVO> map = new HashMap<>();
-    
+    //Map<String, RoomVO> map = new HashMap<>();
+    RoomMap map = RoomMap.getRoomMap();
     @Override
     public String handle(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -24,9 +22,10 @@ public class UpdateRoomController implements Controller {
         String name = request.getParameter("roomname");
         String mode = request.getParameter("mode");
         
+        System.out.println(mode + name);
         
         ServletContext sc = request.getServletContext();
-        HttpSession sess = request.getSession();
+        //HttpSession sess = request.getSession();
         
         RoomVO vo = new RoomVO();
         vo.setName(name);

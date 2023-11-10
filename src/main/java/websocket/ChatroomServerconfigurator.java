@@ -9,5 +9,6 @@ public class ChatroomServerconfigurator extends ServerEndpointConfig.Configurato
 	public void modifyHandshake(ServerEndpointConfig sec, HandshakeRequest request, HandshakeResponse response) {
 		sec.getUserProperties().put("username", (String) ((HttpSession) request.getHttpSession()).getAttribute("login_user_name"));
 		sec.getUserProperties().put("roomNumber", (String) ((HttpSession) request.getHttpSession()).getAttribute("roomNumber"));
+		sec.getUserProperties().put("mode", (String) ((HttpSession) request.getHttpSession()).getAttribute("mode"));
 	}
 }

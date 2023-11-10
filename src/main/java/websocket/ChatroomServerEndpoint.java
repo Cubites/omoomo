@@ -3,6 +3,7 @@ package websocket;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.ServletContext;
 import javax.websocket.EndpointConfig;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
@@ -13,6 +14,8 @@ import javax.websocket.server.ServerEndpoint;
 
 import org.json.JSONObject;
 
+import room.RoomMap;
+import room.RoomVO;
 import socket.Board;
 import socket.SocketConnection;
 
@@ -26,17 +29,20 @@ public class ChatroomServerEndpoint {
 	
 	@OnOpen
 	public void handleOpen(EndpointConfig endpointConfig, Session userSession) {
+        System.out.println("[OnOpen] roomNumber: " + endpointConfig.getUserProperties().get("roomNumber"));
 	    System.out.println("[OnOpen] username: " + endpointConfig.getUserProperties().get("username"));
-	    System.out.println("[OnOpen] roomNumber: " + endpointConfig.getUserProperties().get("roomNumber"));
 		// 세션에 이름과 방 번호 저장
-		userSession.getUserProperties().put("username", endpointConfig.getUserProperties().get("username"));
-		userSession.getUserProperties().put("roomNumber", endpointConfig.getUserProperties().get("roomNumber"));
+        String roomNumber = (String) endpointConfig.getUserProperties().get("roomNumber");
+        String username = (String) endpointConfig.getUserProperties().get("username");
+        
+        userSession.getUserProperties().put("roomNumber", roomNumber);
+		userSession.getUserProperties().put("username", username);
 		userSession.getUserProperties().put("ready", false);
 		
-		String roomNumber = (String) endpointConfig.getUserProperties().get("roomNumber");
+		
 		// 세션에 해당 번호의 방이 있는지 확인해서, 있으면 유저만 추가, 없으면 방 추가 후 유저 추가
 		sc.enterRoom(roomNumber, (Session) userSession);
-		boards.put(roomNumber, new Board());
+		boards.put(roomNumber, new Board((String) userSession.getUserProperties().get("mode")));
 		// 현재 소켓 접속자 현황 확인용 로그
 		System.out.println("[OnOpen] 유저 입장");
 		sc.printRoomAndSockets();
@@ -73,8 +79,6 @@ public class ChatroomServerEndpoint {
 			        Map<String, Integer> stoneLocation = new HashMap<>();
 			        stoneLocation.put("h", h);
 			        stoneLocation.put("v", v);
-			        Boolean winLose = boards.get(roomNumber).win((int) userSession.getUserProperties().get("c"), stoneLocation);
-			        System.out.println("오목 판정: " + winLose);
 			        
 			        // 놓은 위치 값을 같은 방내 다른 사람에게 전송
                     JSONObject resMessage = new JSONObject();
@@ -89,12 +93,35 @@ public class ChatroomServerEndpoint {
                             e.printStackTrace();
                         }
                     });
-			        if(winLose) {
-			            boards.put(roomNumber, new Board());
-			            sc.gameEnd(roomNumber, userSession);
-			        }
-			        Boolean checkThree = boards.get(roomNumber).doubleThree((int) userSession.getUserProperties().get("c"), stoneLocation);
-			        System.out.println("33 판정: " + checkThree);
+
+                    Boolean checkThree = boards.get(roomNumber).doubleThree((int) userSession.getUserProperties().get("c"), stoneLocation);
+                    System.out.println("33 판정: " + checkThree);
+
+                    Boolean winLose = boards.get(roomNumber).win((int) userSession.getUserProperties().get("c"), stoneLocation);
+                    System.out.println("오목 판정: " + winLose);
+                    
+                    System.out.println("boards.get(roomNumber).getMode(): " + boards.get(roomNumber).getMode());
+                    if("33".equals(boards.get(roomNumber).getMode())) {
+                        System.out.println("33 모드임");
+                        if(checkThree) {
+                            System.out.println("33나옴!!!!!");
+                            boards.put(roomNumber, new Board());
+                            sc.gameEnd(roomNumber, userSession, false);
+                        } else {
+                            System.out.println("33 안나옴");
+                            if(winLose) {
+                                System.out.println("33 아니고 이김");
+                                boards.put(roomNumber, new Board());
+                                sc.gameEnd(roomNumber, userSession, true);
+                            }
+                        }
+                    } else {
+                        if(winLose) {
+                            boards.put(roomNumber, new Board());
+                            sc.gameEnd(roomNumber, userSession, true);
+                        }
+                    }
+                        
 			        
 			    }
 			} else if("exit".equals(reqMessage.get("sign"))) {
@@ -105,9 +132,10 @@ public class ChatroomServerEndpoint {
 	
 	@OnClose
 	public void handleClose(Session userSession) {
-		// 방에서 나가는 경우, 해당 인원의 세션 제거(유저가 아무도 없게 되면 방도 삭제)
-	    sc.closeSocket((String) userSession.getUserProperties().get("roomNumber"), userSession);
 		
+	    // 방에서 나가는 경우, 해당 인원의 세션 제거(유저가 아무도 없게 되면 방도 삭제)
+	    sc.closeSocket((String) userSession.getUserProperties().get("roomNumber"), userSession);
+		 
 		// 현재 소켓 접속자 현황 확인용 로그
 		System.out.println("[서버] 유저 나감");
 		sc.printRoomAndSockets();

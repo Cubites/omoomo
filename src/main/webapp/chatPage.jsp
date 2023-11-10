@@ -419,22 +419,23 @@
 						- [화면] 대기 화면으로 자동 이동
 						- [서버] 나가면서 데이터(방 이름, 유저 이름)을 같이 보냄
 				*/
-				$.ajax({
-					type: "post",
-					async: true,
-					url: "updateRoom",
-					dataType: "json", 
-					data: {
-						username: jsonData,
-						roomNumber: jsonData.roomNumber
-					},
-					success: function(data, textStatus){
-						location.href = "/WEB-INF/view/wroom.jsp";
-					}
-				});
+				// $.ajax({
+				//	type: "post",
+				//	async: true,
+				//	url: "updateRoom",
+				//	dataType: "json", 
+				//	data: {
+				//		username: jsonData,
+				//		roomNumber: jsonData.roomNumber
+				//	},
+				//	success: function(data, textStatus){
+				//		location.href = "/WEB-INF/view/wroom.jsp";
+				//	}
+				// });
 
 				/* 방 이름, 유저 이름 데이터를 주면서 나간다고 요청 보냄 */
-				location.href = "/WEB-INF/view/wroom.jsp?";
+				// location.href = "/WEB-INF/view/wroom.jsp?";
+				location.href = "wroom.do";
 			} else if(jsonData.sign == "match") {
 				/* 
 					* 유저가 있는 방에 다른 유저가 입장했을 때
@@ -533,23 +534,25 @@
 				});
 
 				if(jsonData.sign == "run" && jsonData.lose == '${login_user_name}'){
-					$.ajax({
-						type: "post",
-						async: true,
-						url: "updateRoom",
-						dataType: "text", 
-						data: {
-							username: '${login_user_name}',
-							roomNumber: jsonData.roomNumber
-						},
-						success: function(data, textStatus){
-							console.log('response: ' + data);
-						}
-					});
+					//  $.ajax({
+					//	type: "post",
+					//	async: true,
+					//	url: "updateRoom",
+					//	dataType: "text", 
+					//	data: {
+					//		username: '${login_user_name}',
+					//		roomNumber: jsonData.roomNumber
+					//	},
+					//	success: function(data, textStatus){
+					//		console.log('response: ' + data);
+					//	}
+					// });
 					location.href = "wroom.do";
 				}
 
 				let resultBox = document.getElementsByClassName("resultBox");
+				console.log("33임");
+				
 				if('<%=session.getAttribute("login_user_name") %>' == jsonData.win){
 					resultBox[0].innerText = "패";
 					resultBox[0].style.backgroundColor = "#C3A69A";
@@ -582,19 +585,19 @@
 					- [소켓] 해당 유저 소켓 제거
 					- [화면] 페이지 이동
 				*/
-				$.ajax({
-					type: "post",
-					async: true,
-					url: "updateRoom",
-					dataType: "text", 
-					data: {
-						username: '${login_user_name}',
-						roomNumber: jsonData.roomNumber
-					},
-					success: function(data, textStatus){
-						console.log('response: ' + data);
-					}
-				});
+				// $.ajax({
+				//	type: "post",
+				//	async: true,
+				//	url: "updateRoom",
+				//	dataType: "text", 
+				//	data: {
+				//		username: '${login_user_name}',
+				//		roomNumber: jsonData.roomNumber
+				//	},
+				//	success: function(data, textStatus){
+				//		console.log('response: ' + data);
+				// 	}
+				// });
 				location.href = "wroom.do";
 			} 
 		}
@@ -638,11 +641,12 @@
 					websocket.send(JSON.stringify(message));
 				} else {
 					// 게임 중이 아닐 때 나간 경우, 페이지만 이동
-					var message = {
-						sign: "exit",
-						username: document.getElementsByClassName("userNickName")[1].innerHTML
-					}
-					websocket.send(JSON.stringify(message));
+					// var message = {
+					// 	sign: "exit",
+					// 	username: document.getElementsByClassName("userNickName")[1].innerHTML
+					// }
+					// websocket.send(JSON.stringify(message));
+					location.href = "wroom.do";
 				}
 			}
 		});
