@@ -16,7 +16,7 @@ import org.json.JSONObject;
 
 import room.RoomMap;
 import room.RoomVO;
-import socket.Board;
+import socket.BoardVO;
 import socket.SocketConnection;
 
 //@ServerEndpoint("/chatroomServerEndpoint")
@@ -25,29 +25,33 @@ public class ChatroomServerEndpoint {
 	// 방과 유저 정보
 	static SocketConnection sc = new SocketConnection();
 	// 게임 판 정보(Map<방번호, 게임판>)
-	static Map<String, Board> boards = new HashMap<>();
+	static Map<String, BoardVO> boards = new HashMap<>();
 	
+    /* 소켓이 열렸을 때 동작하는 메서드 */
 	@OnOpen
 	public void handleOpen(EndpointConfig endpointConfig, Session userSession) {
-        System.out.println("[OnOpen] roomNumber: " + endpointConfig.getUserProperties().get("roomNumber"));
-	    System.out.println("[OnOpen] username: " + endpointConfig.getUserProperties().get("username"));
-		// 세션에 이름과 방 번호 저장
+        System.out.println("[소켓 연결됨] 방 번호: " + endpointConfig.getUserProperties().get("roomNumber"));
+	    System.out.println("[소켓 연결됨] 유저 이름: " + endpointConfig.getUserProperties().get("username"));
+		
+	    // 세션에 이름과 방 번호, 준비 여부 저장
         String roomNumber = (String) endpointConfig.getUserProperties().get("roomNumber");
         String username = (String) endpointConfig.getUserProperties().get("username");
-        
         userSession.getUserProperties().put("roomNumber", roomNumber);
 		userSession.getUserProperties().put("username", username);
 		userSession.getUserProperties().put("ready", false);
 		
-		
 		// 세션에 해당 번호의 방이 있는지 확인해서, 있으면 유저만 추가, 없으면 방 추가 후 유저 추가
 		sc.enterRoom(roomNumber, (Session) userSession);
-		boards.put(roomNumber, new Board((String) userSession.getUserProperties().get("mode")));
+		
+		// 빈 오목판 생성
+		boards.put(roomNumber, new BoardVO((String) userSession.getUserProperties().get("mode")));
+		
 		// 현재 소켓 접속자 현황 확인용 로그
-		System.out.println("[OnOpen] 유저 입장");
+		System.out.println("[소켓 연결됨] 유저 입장");
 		sc.printRoomAndSockets();
 	}
 	
+	/* 소켓 통신으로 메세지가 왔을 때 동작하는 소스 */
 	@OnMessage
 	public void handleMessage(String message, Session userSession) throws Exception {
 		System.out.println("[서버] 메세지 받음");
@@ -55,25 +59,26 @@ public class ChatroomServerEndpoint {
 		String roomNumber = (String) userSession.getUserProperties().get("roomNumber");
 		if(username != null) {
 			JSONObject reqMessage = new JSONObject(message);
-			System.out.println("요청 유형: " + reqMessage.get("sign"));
+			System.out.println("[소켓 메시지 받음] 요청 유형: " + reqMessage.get("sign"));
 			if("init".equals(reqMessage.get("sign"))) {
 			    // 초기 설정 - 방에 입장했을 때
 			    sc.setInit(userSession);
 			} else if("ready".equals(reqMessage.getString("sign"))) {
-                // 사용자가 준비된 경우 - 소켓에 저장 후, 준비한 사용하에게 해당 값 전달
+                // 사용자가 준비된 경우
 			    sc.gameReady(roomNumber, username, reqMessage.getBoolean("value"));
 			    sc.gameStart(roomNumber);
             } else if("run".equals(reqMessage.getString("sign"))) {
                 // 게임 중 방을 나가는 경우
                 sc.runGame(roomNumber, username);
             } else if("chat".equals(reqMessage.getString("sign"))) {
-                // 받은 메시지가 채팅 메시지 인 경우 - 채팅 메시지를 같은 방내 다른 사용자에게 전송
+                // 받은 메시지가 채팅 메시지 인 경우
                 sc.sendMessage(roomNumber, username, reqMessage.getString("m"));
             } else if("game".equals(reqMessage.getString("sign"))){
+                // 사용자가 돌을 놓은 경우
                 int h = reqMessage.getInt("h");
                 int v = reqMessage.getInt("v");
                 
-                // 놓은 위치에 이미 돌이 있는지 없는지 & 본인 차례가 맞는지 확인
+                // 놓은 위치에 이미 돌이 있는지 없는지 && 본인 차례가 맞는지 확인
                 if(boards.get(roomNumber).checkOne(h, v) && boards.get(roomNumber).checkTurn((int) userSession.getUserProperties().get("c"))) {
 			        boards.get(roomNumber).setStone(h, v, (int) userSession.getUserProperties().get("c"));
 			        Map<String, Integer> stoneLocation = new HashMap<>();
@@ -105,19 +110,19 @@ public class ChatroomServerEndpoint {
                         System.out.println("33 모드임");
                         if(checkThree) {
                             System.out.println("33나옴!!!!!");
-                            boards.put(roomNumber, new Board());
+                            boards.put(roomNumber, new BoardVO());
                             sc.gameEnd(roomNumber, userSession, false);
                         } else {
                             System.out.println("33 안나옴");
                             if(winLose) {
                                 System.out.println("33 아니고 이김");
-                                boards.put(roomNumber, new Board());
+                                boards.put(roomNumber, new BoardVO());
                                 sc.gameEnd(roomNumber, userSession, true);
                             }
                         }
                     } else {
                         if(winLose) {
-                            boards.put(roomNumber, new Board());
+                            boards.put(roomNumber, new BoardVO());
                             sc.gameEnd(roomNumber, userSession, true);
                         }
                     }
