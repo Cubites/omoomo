@@ -8,6 +8,7 @@
 <link href="signup_css.css" rel="stylesheet">
 <script src="http://code.jquery.com/jquery-latest.min.js"></script>
 <script type="text/javascript">
+	// 아이디 중복 확인
 	function checkName() {
 		var _id = $("#t_id").val();
 		if (_id == '') {
@@ -70,19 +71,24 @@
 			<div id="signup_logo"></div>
 			<div id="signup_main">
 				<form action="register.do" method="post" id="signup_form">
-
 					<div id="signup">회원가입</div>
+					<!-- 아이디 입력창 -->
 					<div id="signup_id">
 						<input type="text" name="user_name" id="t_id"
 							placeholder="아이디를 입력하세요" /> <input type="button"
 							id="btnDuplicate" value="중복확인" onClick="checkName()" />
 					</div>
+					<!-- /아이디 입력창 -->
+
+					<!-- 비밀번호 입력창 -->
 					<input type="password" name="user_pw" id="pw_1"
 						placeholder="비밀번호를 입력하세요" /> <input type="password"
 						name="user_pw_repeat" id="pw_2" oninput="checkPw()"
 						placeholder="비밀번호를 입력하세요" />
 					<p id="correct">비밀번호가 일치합니다.</p>
 					<p id="incorrect">비밀번호가 일치하지 않습니다.</p>
+					<!-- /비밀번호 입력창 -->
+
 					<div id="btns">
 						<input type="button" value="돌아가기" onClick="goHome()" id="back_btn">
 						<input type="submit" value="가입하기" id="btnRegister">
