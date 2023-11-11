@@ -60,7 +60,7 @@ public class BoardVO {
         }
     }
 
-    // 오폭한의 모드 값 반환
+    // 오목판의 모드 값 반환
     public String getMode() {
         return mode;
     }
@@ -94,8 +94,7 @@ public class BoardVO {
     }
     
     // 오목(승리) 판별
-    public boolean win(int stoneColor, Map<String, Integer> stoneLocation){    
-        int color;
+    public boolean win(int stoneColor, Map<String, Integer> stoneLocation){
         int x = stoneLocation.get("h"); //stone location = {h: 0, v: 0} 오목판의 좌표
         int y = stoneLocation.get("v");
         
@@ -136,8 +135,6 @@ public class BoardVO {
     
     // 33금지 판별
     public boolean doubleThree(int stoneColor, Map<String, Integer> stoneLocation){
-
-        int color;
         int x = stoneLocation.get("h"); //stone location = {h: 0, v: 0} 오목판의 좌표
         int y = stoneLocation.get("v");
         

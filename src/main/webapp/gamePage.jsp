@@ -6,299 +6,7 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Insert title here</title>
-	<style>
-		*{
-			margin: 0;
-			padding: 0;
-			box-sizing: border-box;
-		}
-		.dragNo{
-			-webkit-user-select:none;
-			-moz-user-select:none;
-			-ms-user-select:none;
-			user-select:none;
-		}
-		/* total page */
-		#container{
-			display: flex;
-			flex-direction: row;
-			width: 100%;
-			min-width: 1600px;
-			height: 100vh;
-			min-height: 900px;
-		}
-		/** game area **/
-		#gamepage{
-			width: 80%;
-			min-width: 1280px;
-			height: 100%;
-			background-color: #ddd;
-			display: flex;
-			flex-direction: row;
-			justify-content: center;
-			align-items: center;
-		}
-		#boardback{
-			width: 810px;
-			min-width: 810px;
-			height: 810px;
-			min-height: 810px;
-			background-color: #999;
-			border-radius: 20px;
-			box-shadow: inset 8px 8px 10px rgba(255, 255, 255, .25), inset -8px -8px 10px rgba(0, 0, 0, .25), 8px 8px 10px rgba(0, 0, 0, .45);
-			background-color: #916D5E;
-			display: flex;
-			flex-direction: column;
-			justify-content: center;
-			align-items: center;
-			position: relative;
-		}
-		#boardfront{
-			width: 754px;
-			height: 754px;
-			background-color: #C3A69A;
-			background-image: url('./images/lines.png');
-			background-position: -3px -3px;
-			/* background-size: cover; */
-			background-size: 754px 754px;
-			box-sizing: border-box;
-			border: 3px solid #000;
-			display: flex;
-			flex-direction: column;
-			justify-content: center;
-			align-items: center;
-		}
-		/*** stone area ***/
-		#stoneboard{
-			width: 810px;
-			height: 810px;
-			background-color: transparent;
-			display: flex;
-			flex-direction: column;
-			justify-content: center;
-			position: absolute;
-			top: 0;
-			left: 0;
-		}
-		/**** stone design ****/
-		.rowStoneBox{
-			width: 100%;
-			height: 42px;
-			display: flex;
-			flex-direction: row;
-			justify-content: center;
-			align-items: center;
-		}
-		.stoneCell{
-			width: 42px;
-			height: 42px;
-			display: flex;
-			flex-direction: column;
-			justify-content: center;
-			align-items: center;
-		}
-		.stone{
-			width: 38px;
-			height: 38px;
-			border-radius: 19px;
-			background-color: #101010;
-			box-shadow: inset 4px 4px 5px rgba(255, 255, 255, .25), inset -4px -4px 5px rgba(0, 0, 0, .25);
-			cursor: pointer;
-			opacity: 0;
-		}
-		/*** cover ***/
-		#cover{
-			position: absolute;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
-			background-color: rgba(0, 0, 0, .45);
-			z-index: 100;
-			border-radius: 20px;
-			display: flex;
-			flex-direction: column;
-			justify-content: end;
-			align-items: center;
-		}
-		#cover>div{
-			background-color: #C3A69A;
-			color: #3d2c25;
-			opacity: 0.7;
-			text-align: center;
-			width: 600px;
-			height: 100px;
-			border-radius: 20px;
-			font-weight: bold;
-			font-size: 25px;
-			display: flex;
-			flex-direction: column;
-			justify-content: center;
-			align-items: center;
-			margin-bottom: 30px;
-			box-shadow: inset 8px 8px 10px rgba(255, 255, 255, .25), inset -8px -8px 10px rgba(0, 0, 0, .25), 8px 8px 10px rgba(0, 0, 0, .45);
-		}
-		/*** stone bowl design ***/
-		.bowl{
-			width: 20%;
-			height: 100%;
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			padding: 30px 0;
-		}
-		.bowlImage{
-			width: 12vw;
-			min-width: 200px;
-			height: 12vw;
-			min-height: 200px;
-			display: flex;
-			flex-direction: column;
-			justify-content: center;
-			align-items: center;
-			border-radius: 150px;
-			box-shadow: inset 8px 8px 10px rgba(255, 255, 255, .25), inset -8px -8px 10px rgba(0, 0, 0, .25);
-		}
-		.bowlImageInside{
-			width: 10vw;
-			min-width: 170px;
-			height: 10vw;
-			min-height: 170px;
-			border-radius: 120px;
-			box-shadow: inset 8px 8px 10px rgba(0, 0, 0, .25), inset -6px -6px 10px rgba(255, 255, 255, .25);
-		}
-		/*** userNickName ***/
-		.userNickName{
-			width: 12vh;
-			min-width: 200px;
-			height: 50px;
-			border-radius: 10px;
-			background-color: #f9f9f9;
-			border: 3px solid #101010;
-			box-shadow: inset 4px 4px 10px rgba(0, 0, 0, .25), inset -6px -6px 10px rgba(255, 255, 255, .25);
-			display: flex;
-			flex-direction: column;
-			justify-content: center;
-			align-items: center;
-			margin: 20px 0;
-		}
-		/*** resultBoard ***/
-		.resultBox{
-			width: 10vh;
-			min-width: 150px;
-			height: 10vh;
-			min-height: 150px;
-			border-radius: 20px;
-			border: 3px solid #3d2c25;
-			display: flex;
-			flex-direction: column;
-			justify-content: center;
-			align-items: center;
-			font-size: 50px;
-			color: white;
-			font-weight: bold;
-			display: none;
-		}
-		/** chat area **/
-		#chatpage{
-			width: 20%;
-			min-width: 320px;
-			height: 100%;
-			background-color: #999;
-			display: flex;
-			flex-direction: column;
-			justify-content: space-between;
-			align-items: center;
-			padding: 10px;
-		}
-		/*** button area ***/
-		#readyExitBox{
-			width: 90%;
-			height: 10%;
-			display: flex;
-			flex-direction: row;
-			justify-content: space-between;
-			align-items: center;
-		}
-		.readyButton{
-			width: 60%;
-			height: 90%;
-			background-color: #ddd;
-			border-radius: 30px;
-			font-size: 30px;
-			background-color: #C3A69A;
-			display: flex;
-			flex-direction: column;
-			justify-content: center;
-			align-items: center;
-			font-weight: 900;
-			color: #61493f;
-			border: 3px solid #3d2c25;
-			box-shadow: inset 8px 8px 10px rgba(255, 255, 255, .25), inset -8px -8px 10px rgba(0, 0, 0, .25);
-			cursor: pointer;
-		}
-		.readyButton:hover{
-			background-color: #61493f;
-			color: #C3A69A;
-			box-shadow: inset 4px 4px 10px rgba(0, 0, 0, .25), inset -6px -6px 10px rgba(255, 255, 255, .25);
-		}
-		.readyButtonActivate{
-			background-color: #61493f;
-			color: #C3A69A;
-			box-shadow: inset 4px 4px 10px rgba(0, 0, 0, .25), inset -6px -6px 10px rgba(255, 255, 255, .25);
-		}
-		#exit{
-			width: 30%;
-			height: 90%;
-			background-color: #666;
-			border-radius: 30px;
-			border: 3px solid #333;
-			font-size: 20px;
-			font-weight: bold;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			cursor: pointer;
-		}
-		#exit:hover{
-			background-color: #333;
-			color: #fff;
-		}
-		/*** chat message area ***/
-		#messagesTextArea{
-			width: 90%;
-			height: 80%;
-			border-radius: 10px;
-			padding: 10px;
-		}
-		/*** chat input area ***/
-		#inputbox{
-			display: flex;
-			flex-direction: row;
-			justify-content: space-between;
-			width: 90%;
-			height: 5%;
-		}
-		#messageText{
-			width: 75%;
-			height: 100%;
-			border-radius: 10px;
-			padding: 5px;
-			border: none;
-		}
-		#messageText+input{
-			width: 20%;
-			height: 100%;
-			border: none;
-			border-radius: 10px;
-			box-shadow: inset 4px 4px 10px rgba(255, 255, 255, .25), inset -4px -4px 10px rgba(0, 0, 0, .25);
-			background-color: #C3A69A;
-		}
-		#messageText+input:hover{
-			background-color: #a78a7d;
-			cursor: pointer;
-		}
-	</style>
+	<link href="game_page.css" ref="stylesheet">
 	<script src="https://code.jquery.com/jquery-latest.min.js"></script>
 </head>
 <body>
@@ -317,10 +25,12 @@
 					
 				</div>
 			</div>
+			<!-- /장식용 오목돌 통 -->
 			<!-- 오목판 -->
 			<div id="boardback">
 				<div id="boardfront">
 					<div id="stoneboard">
+						<!-- 돌이 놓일 위치에 돌을 미리 놓아 둠 -->
 						<c:forEach var="i" begin="0" end="18">
 							<div class="rowStoneBox">
 								<c:forEach var="j" begin="0" end="18">
@@ -330,6 +40,7 @@
 								</c:forEach>
 							</div>
 						</c:forEach>
+						<!-- /돌이 놓일 위치에 돌을 미리 놓아 둠 -->
 					</div>
 				</div>
 				<!-- 게임 시작 전, 오목판 가림막 -->
@@ -346,6 +57,7 @@
 					</div>
 				</div>
 			</div>
+			<!-- /오목판 -->
 			<!-- 장식용 오목돌 통 -->
 			<div class="bowl" style="justify-content: end;">
 				<input type="hidden" id="resultValue" value="">
@@ -359,6 +71,7 @@
 					<div class="bowlImageInside" style="background-color: #101010"></div>
 				</div>
 			</div>
+			<!-- /장식용 오목돌 통 -->
 		</div>
 		<!-- /오목판 영역 -->
 
@@ -382,13 +95,15 @@
 		let userReady = false;
 		let gameStartConstant = false;
 
+		// 뒤로 가기로 이동할 페이지에 현재 페이지 url을 넣음
 		history.pushState(null, null, location.href); 
 
-		// 뒤로라기 이벤트감지 -> 현재페이지로 이동
+		// 뒤로가기 이벤트감지 -> 현재페이지로 이동
 		window.onpopstate = function() { 
 			history.go(1); 
 		}
 		
+		// websocket.onopen - 웹 소켓이 연결되었을 때 실행할 소스를 적는 곳
 		websocket.onopen = function (message) {
 			var message = {
 				sign: "init"
@@ -396,65 +111,38 @@
 			websocket.send(JSON.stringify(message));
 		}
 
-		// 소켓 서버에서 오는 메세지 - 메시지
+		// websocket.ommessage - 소켓 서버에서 오는 메세지 - 메시지
 		websocket.onmessage = function processMessage(message) {
 			var jsonData = JSON.parse(message.data);
 			if(jsonData.sign == "init"){
-				/* 
-					* 방에 입장한 경우
-						- [화면] 돌에 색 지정
-						- [화면] 돌 통 색 지정
-						- [화면, 소켓] 준비 여부 false로 지정
-				*/
+				/* 방에 입장한 경우 */
+				// 오목판에 놓은 돌 색을 유저 돌 색으로 변경
 				Array.from(document.getElementsByClassName("stone")).forEach(stone => {
 					stone.style.backgroundColor = jsonData.c == -1 ? "black" : "white";
 				});
+				// 화면의 돌 통의 색을 유저 색에 맞게 변경
 				document.getElementsByClassName("bowlImage")[0].style.backgroundColor = jsonData.c == -1 ? "#e8e8e8" : "#252525";
 				document.getElementsByClassName("bowlImage")[1].style.backgroundColor = jsonData.c == -1 ? "#252525" : "#e8e8e8";
 				document.getElementsByClassName("bowlImageInside")[0].style.backgroundColor = jsonData.c == -1 ? "#bbbbbb" : "#101010";
 				document.getElementsByClassName("bowlImageInside")[1].style.backgroundColor = jsonData.c == -1 ? "#101010" : "#bbbbbb";
 			} else if(jsonData.sign == "noSeat") {
-				/* 
-					* 방에 자리가 없는 경우 
-						- [화면] 대기 화면으로 자동 이동
-						- [서버] 나가면서 데이터(방 이름, 유저 이름)을 같이 보냄
-				*/
-				// $.ajax({
-				//	type: "post",
-				//	async: true,
-				//	url: "updateRoom",
-				//	dataType: "json", 
-				//	data: {
-				//		username: jsonData,
-				//		roomNumber: jsonData.roomNumber
-				//	},
-				//	success: function(data, textStatus){
-				//		location.href = "/WEB-INF/view/wroom.jsp";
-				//	}
-				// });
-
-				/* 방 이름, 유저 이름 데이터를 주면서 나간다고 요청 보냄 */
-				// location.href = "/WEB-INF/view/wroom.jsp?";
+				/* 방에 자리가 없는 경우 */
+				// 들어온 유저를 다시방으로 보냄
 				location.href = "wroom.do";
 			} else if(jsonData.sign == "match") {
-				/* 
-					* 유저가 있는 방에 다른 유저가 입장했을 때
-						- [화면] 서로에게 상대 유저 닉네임 전송 및 화면에 표시
-						- [소켓] 입장한 유저 정보 저장
-						- [화면] 이전 승패 표시가 있는 경우, 표시 제거
-				*/
+				/* 유저가 있는 방에 다른 유저가 입장했을 때 */
+				// 상대 유저 화면에 유저 이름 표시
 				document.getElementsByClassName("userNickName")[0].innerText = jsonData.matchUserNickname;
+				// 클라이언트의 승패 결과 값을 초기화
 				Array.from(document.getElementsByClassName("resultBox")).forEach(resultBox => {
 					resultBox.style.display = "none";
 				});
 			} else if(jsonData.sign == "ready"){
-				/* 
-					* 준비 버튼을 누른 경우
-						- [소켓] 준비 상태 저장
-						- [화면] "게임 준비" 버튼을 "준비 완료"로 변경
-				*/
+				/* 준비 버튼을 누른 경우 */
+				// 준비 값 저장
 				userReady = jsonData.value;
-				let readyButton = document.getElementsByClassName("readyButton")[0];
+				var readyButton = document.getElementsByClassName("readyButton")[0];
+				// 준비 버튼을 준비 완료 상태로 변경
 				readyButton.innerText = userReady ? "준비 완료" : "게임 준비";
 				if(userReady){
 					readyButton.classList.add("readyButtonActivate");
@@ -462,14 +150,13 @@
 					readyButton.classList.remove("readyButtonActivate");
 				}
 			} else if(jsonData.sign == "start"){
-				/* 
-					* 게임이 시작된 경우(양쪽 모두 준비를 누른 경우)
-						- [화면] 오목판의 가림막이 사라짐
-						- [화면] "준비 완료" 버튼을 "게임 중"으로 변경
-				*/
+				/* 게임이 시작된 경우(양쪽 모두 준비를 누른 경우) */
 				if(jsonData.value){
+					// 게임 시작 여부를 시작(true)로 변경
 					gameStartConstant = jsonData.value;
+					// 오목판 가림막 해제
 					document.getElementById("cover").style.display = "none";
+					// 게임 준비 버튼을 게임 중으로 변경
 					document.getElementsByClassName("readyButton")[0].innerText = "게임 중";
 					var result = document.getElementById("resultValue").value;
 					if(result){
@@ -483,42 +170,35 @@
 							});
 						}
 					}
+					// 놓여있던 오목돌 제거(숨김)
 					Array.from(document.getElementsByClassName("stone")).forEach(stone => {
 						stone.style.opacity = 0;
 					});
 				}
 			} else if(jsonData.sign == "chat"){
-				/* 
-					* 채팅을 입력한 경우
-						- [화면] 채팅 창에 표시
-				*/
+				/* 채팅을 입력한 경우 */
+				// 양쪽 채팅창에 둘 다 표시
 				if(jsonData.message != null) messagesTextArea.value += jsonData.username + " : " + jsonData.message + "\n";
 			} else if(jsonData.sign == "game"){
-				/* 
-					* 돌을 놓은 경우
-						- [화면] 놓은 사람과 상대의 화면에 모두 표시
-				*/
-				console.log(jsonData);
+				/* 돌을 놓은 경우 */
+				// 양쪽 오목판에 둘 다 표시
 				document.getElementById("p" + jsonData.h + "-" + jsonData.v).style.backgroundColor = jsonData.c == -1 ? "black" : "white";
 				document.getElementById("p" + jsonData.h + "-" + jsonData.v).style.opacity = 1;
 			} else if(jsonData.sign == "gameEnd" || jsonData.sign == "run"){
-				/* 
-					* 게임이 끝난 경우(한 쪽이 승리했거나, 한 명이 게임을 나간 경우)
-						- [화면] "게임 중" 이었던 버튼을 다시 "게임 준비"로 변경
-						- [화면, 소켓] 모든 유저의 상태를 준비 안함 상태로 변경
-						- [화면] 오목판에 커버를 씌워 더 이상 돌을 놓지 못하게 함
-						- [화면] 각자에게 승패 표시를 띄움
-						- [서버] 게임 결과(승패 정보)를 전송
-				*/
+				/* 게임이 끝난 경우(한 쪽이 승리했거나, 한 명이 게임을 나간 경우) */
+				// 게임 시작 여부를 false로 변경
 				gameStartConstant = false;
+				
+				// 게임 준비 여부를 false로 변경
 				userReady = false;
 				
-				let readyButton = document.getElementsByClassName("readyButton")[0];
+				// 게임 준비 버튼을 처음 상태로 되돌림
+				var readyButton = document.getElementsByClassName("readyButton")[0];
 				readyButton.innerText = "게임 준비";
 				document.getElementById("cover").style.display = "flex";
 				readyButton.classList.remove("readyButtonActivate");
 
-				/* 승패 결과를 보냄 */
+				// 승패 결과를 보냄
 				$.ajax({
 					type: "post",
 					async: true,
@@ -532,28 +212,16 @@
 						console.log('response: ' + data);
 					}
 				});
-
+				
+				// 게임 중에 나가기를 누른 경우, 대기방으로 이동(패배 처리)
 				if(jsonData.sign == "run" && jsonData.lose == '${login_user_name}'){
-					//  $.ajax({
-					//	type: "post",
-					//	async: true,
-					//	url: "updateRoom",
-					//	dataType: "text", 
-					//	data: {
-					//		username: '${login_user_name}',
-					//		roomNumber: jsonData.roomNumber
-					//	},
-					//	success: function(data, textStatus){
-					//		console.log('response: ' + data);
-					//	}
-					// });
 					location.href = "wroom.do";
 				}
-
-				let resultBox = document.getElementsByClassName("resultBox");
-				console.log("33임");
+				
+				var resultBox = document.getElementsByClassName("resultBox");
 				
 				if('<%=session.getAttribute("login_user_name") %>' == jsonData.win){
+					// 클라이언트가 승자인 경우, 클라이언트 쪽에 승 표시 및 흰색 돌 배정
 					resultBox[0].innerText = "패";
 					resultBox[0].style.backgroundColor = "#C3A69A";
 					resultBox[0].style.display = "flex";
@@ -566,6 +234,7 @@
 					document.getElementsByClassName("bowlImageInside")[1].style.backgroundColor = "#bbbbbb";
 					document.getElementById("resultValue").value = 1;
 				} else {
+					// 클라이언트가 패자인 경우, 클라이언트 족에 패 표시 및 검은색 돌 배정
 					resultBox[0].innerText = "승";
 					resultBox[0].style.backgroundColor = "#61493f";
 					resultBox[0].style.display = "flex";
@@ -580,27 +249,12 @@
 				}
 				
 			} else if(jsonData.sign == "exit"){
-				/* 
-				* 나가기 버튼을 누른 경우
-					- [소켓] 해당 유저 소켓 제거
-					- [화면] 페이지 이동
-				*/
-				// $.ajax({
-				//	type: "post",
-				//	async: true,
-				//	url: "updateRoom",
-				//	dataType: "text", 
-				//	data: {
-				//		username: '${login_user_name}',
-				//		roomNumber: jsonData.roomNumber
-				//	},
-				//	success: function(data, textStatus){
-				//		console.log('response: ' + data);
-				// 	}
-				// });
+				/* 게임 중이 아닐 때 나가기 버튼을 누른 경우 */
+				// 대기방으로 이동
 				location.href = "wroom.do";
 			} 
 		}
+		
 		// 소켓 서버에서 오는 메시지 - 에러
 		websocket.onerror = function(e){
 			console.log(e);
@@ -641,11 +295,6 @@
 					websocket.send(JSON.stringify(message));
 				} else {
 					// 게임 중이 아닐 때 나간 경우, 페이지만 이동
-					// var message = {
-					// 	sign: "exit",
-					// 	username: document.getElementsByClassName("userNickName")[1].innerHTML
-					// }
-					// websocket.send(JSON.stringify(message));
 					location.href = "wroom.do";
 				}
 			}
