@@ -8,7 +8,7 @@ import user.UserVO;
 
 @Data
 public class RoomVO {
-
+    //방 객체
     private String num;
     private String name;
     private String mode;
@@ -22,6 +22,7 @@ public class RoomVO {
         this.userlist = new Vector<>();
     }
 
+    //방의 이름과 모드를 seed로 해서 방의 번호를 생성
     public String genRoomNumber() {
         String seed = name + mode;
         int hashCode = name.hashCode();
