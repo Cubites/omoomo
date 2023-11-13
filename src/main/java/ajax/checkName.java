@@ -17,14 +17,17 @@ public class checkName extends HttpServlet {
        
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+	    // 아이디 중복 확인 로직
 		response.setContentType("text");
+		// 바로 값을 보낼 수 있도록 사용
 		PrintWriter writer = response.getWriter();
 		
+		// ajax로 보낸 id 받아서 아이디 중복 확인 함수 실행
 		String id = (String) request.getParameter("id");
-		System.out.println("id = " + id);
 		UserDAO userDAO = new UserDAO();
 		boolean overlappedID = userDAO.overlappedID(id);
-		System.out.println(">>"+overlappedID);
+		
+		// 실행 결과에 따라서 다른 값 넣어서 보내줌
 		if (overlappedID == true) {
 			writer.print("not_usable");
 		} else 
