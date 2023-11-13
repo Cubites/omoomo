@@ -6,7 +6,7 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Insert title here</title>
-	<link href="game_page.css" ref="stylesheet">
+	<link href="game_page.css" rel="stylesheet">
 	<script src="https://code.jquery.com/jquery-latest.min.js"></script>
 </head>
 <body>
@@ -248,11 +248,7 @@
 					document.getElementById("resultValue").value = 0;
 				}
 				
-			} else if(jsonData.sign == "exit"){
-				/* 게임 중이 아닐 때 나가기 버튼을 누른 경우 */
-				// 대기방으로 이동
-				location.href = "wroom.do";
-			} 
+			}
 		}
 		
 		// 소켓 서버에서 오는 메시지 - 에러

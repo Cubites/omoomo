@@ -98,12 +98,7 @@ public class ChatroomServerEndpoint {
                             e.printStackTrace();
                         }
                     });
-
-                    // 유저가 돌을 놓아 33이 됐는지 확인
-                    System.out.println("[오목 절차 진행] 33금지 판별");
-                    Boolean checkThree = boards.get(roomNumber).doubleThree((int) userSession.getUserProperties().get("c"), stoneLocation);
-                    System.out.println("[오목 절차 진행] 33 판정: " + checkThree);
-
+                    
                     // 유저가 돌을 놓아 오목이 됐는지 확인
                     System.out.println("[오목 절차 진행] 오목 판별");
                     Boolean winLose = boards.get(roomNumber).win((int) userSession.getUserProperties().get("c"), stoneLocation);
@@ -112,6 +107,10 @@ public class ChatroomServerEndpoint {
                     
                     if("33".equals(boards.get(roomNumber).getMode())) {
                         // 현재 방이 33금지인 방인 경우
+                        // 유저가 돌을 놓아 33이 됐는지 확인
+                        System.out.println("[오목 절차 진행] 33금지 판별");
+                        Boolean checkThree = boards.get(roomNumber).doubleThree((int) userSession.getUserProperties().get("c"), stoneLocation);
+                        System.out.println("[오목 절차 진행] 33 판정: " + checkThree);
                         if(checkThree) {
                             // 33이 나온 경우
                             boards.put(roomNumber, new BoardVO());
@@ -132,12 +131,7 @@ public class ChatroomServerEndpoint {
                             sc.gameEnd(roomNumber, userSession, true);
                         }
                     }
-                        
-			        
 			    }
-			} else if("exit".equals(reqMessage.get("sign"))) {
-			    // 유저가 나가기 버튼을 눌러 방을 나간 경우
-			    sc.exitRoom(roomNumber, userSession);
 			}
 		}
 	}
