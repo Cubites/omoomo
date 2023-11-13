@@ -15,7 +15,8 @@ public class RoomVO {
     private String owner;
     private int peopleNum;
     // private Set<Session> users;
-    // 추가 장원
+     
+    // Room에 UserVO리스트를 저장해서 유저 list를 둠 
     private List<UserVO> userlist;
 
     public RoomVO() {

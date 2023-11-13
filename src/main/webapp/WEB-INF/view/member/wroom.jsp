@@ -18,7 +18,8 @@
 
   <script type="text/javascript">
     $(function () {
-      /*----------------장원 시작(1)---------------*/
+      /*----------------장원 시작(1)--------------- */
+      
       ajaxLoginUser("${login_user_name}");
       ajaxList("");
       $("#searchInputbox > input").keyup(function () {
@@ -124,13 +125,16 @@
 
     /*----------------장원 시작(2)---------------*/
     function ajaxLoginUser(loginUser) {
-
+	
+     //post방식으로 ajax요청 로그인한 멤버 값 DB에서 가져옴
       $.ajax({
         type: 'post',
         url: "<c:url value='/getMemberList.do'/>",
+        //json으로 return받음
         dataType: 'JSON',
         data: { 'name': loginUser },
         success: function (result) {
+        	//return받은 json (result)에는 1개의 json객체가 들어 있음(배열) -> 배열접근을 통해 값 꺼내기
           console.log(result);
           $("#namebox").text(result[0].userName);
           $("#win").text(result[0].win);
@@ -141,6 +145,7 @@
         }
       });
     }
+    //랭킹 검색한 json불러오기
     function ajaxList(name) {
 
       $.ajax({
@@ -149,8 +154,12 @@
         dataType: 'JSON',
         data: { 'name': name },
         success: function (result) {
-
+		
+        
           $("#rakingshow").html("");
+          
+          //결과 알아보기 쉽게 member에 담음 
+         
           var member = result;
           var html = "";
           var idx;
@@ -159,6 +168,7 @@
           } else {
             idx = member.length
           }
+          //for문을 돌면서 이름과 rank를 출력 
           for (let i = 0; i < idx; i++) {
             html += "<tr class='rankfont'><td>" + member[i].userName + "</td>"
             html += "<td>" + member[i].rank + "등</td></tr>"

@@ -92,10 +92,11 @@ public class UserDAO {
         }
         return result;
     }
-
+    //MemberList 불러오는 코드 
     public List<UserVO> MemberList(String username) {
         System.out.println("dao호출");
         List<UserVO> list = new ArrayList<>();
+        //rank_view에서 LIKE를 사용해서 이름을 체크 
         String sql = "select * from rank_view where user_name LIKE '%'||?||'%'";
         try {
 

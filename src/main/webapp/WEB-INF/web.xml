@@ -10,6 +10,7 @@
     <welcome-file>default.htm</welcome-file>
   </welcome-file-list>
   
+  <!-- 인코딩필터 -->
   <filter>
     <filter-name>homeAndEncoding</filter-name>
     <filter-class>frontcontroller.HomeAndEncoding</filter-class>
