@@ -1,7 +1,6 @@
 package controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -22,7 +21,6 @@ public class RegisterController implements Controller {
 		if("get".equalsIgnoreCase(method)) {
 			return "registerForm"; //nextPage return
 		}
-			
 		// post요청 (회원가입 정보 입력 후 form에서 submit시 로직처리)
 		UserVO user = new UserVO(request.getParameter("user_name"), request.getParameter("user_pw"));
 		UserDAO userDAO = new UserDAO();

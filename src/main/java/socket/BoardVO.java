@@ -5,13 +5,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Board {
+public class BoardVO {
     private List<List<Map<String, Integer>>> board = new ArrayList<>();
     private int size;
     private int stoneCount;
     private String mode;
     
-    public Board() {
+    // 생성자 - 19*19 크기의 빈 오목판 생성
+    public BoardVO() {
         stoneCount = 0;
         size = 19;
         for(int i=0; i<size; i++) {
@@ -25,24 +26,9 @@ public class Board {
             }
         }
     }
-    
-    public Board(String mode) {
-        stoneCount = 0;
-        size = 19;
-        this.mode = mode;
-        for(int i=0; i<size; i++) {
-            board.add(new ArrayList<>());
-            for(int j=0; j<size; j++) {
-                Map<String, Integer> temp = new HashMap<>();
-                temp.put("h", 0);
-                temp.put("v", 0);
-                temp.put("c", 0);
-                board.get(i).add(temp);
-            }
-        }
-    }
-    
-    public Board(int size) {
+
+    // 생성자 - 크기를 입력받아(n) n*n 크기의 빈 오목판 생성
+    public BoardVO(int size) {
         stoneCount = 0;
         this.size = size;
         for(int i=0; i<size; i++) {
@@ -57,23 +43,40 @@ public class Board {
         }
     }
     
+    // 셍성자 - 모드값(일잔, 33금지, 44금지 등)이 부여된 오목판 생성 
+    public BoardVO(String mode) {
+        stoneCount = 0;
+        size = 19;
+        this.mode = mode;
+        for(int i=0; i<size; i++) {
+            board.add(new ArrayList<>());
+            for(int j=0; j<size; j++) {
+                Map<String, Integer> temp = new HashMap<>();
+                temp.put("h", 0);
+                temp.put("v", 0);
+                temp.put("c", 0);
+                board.get(i).add(temp);
+            }
+        }
+    }
+
+    // 오목판의 모드 값 반환
     public String getMode() {
         return mode;
     }
     
+    // 오목판 전체 데이터 반환
     public List<List<Map<String, Integer>>> getBoard() {
         return board;
     }
     
-    // 놓인 돌이 있는지 없는지 확인
+    // 돌을 놓으려는 자리에 놓인 돌이 있는지 없는지 확인
     public boolean checkOne(int h, int v) {
         return board.get(v).get(h).get("c") == 0;
     }
     
-    // 순서 판별
+    // 돌을 놓으려할 때 놓은 사람의 순서가 맞는지 판별
     public boolean checkTurn(int c) {
-        System.out.println(c == -1 ? "Black Stone" : "White Stone");
-        System.out.println(stoneCount % 2 == 1 ? "White Turn" : "Black Turn");
         if(stoneCount % 2 == 1 && c == 1) {
             stoneCount++;
             return true;
@@ -81,7 +84,7 @@ public class Board {
             stoneCount++;
             return true;
         }
-        System.out.println("올바르지 않는 턴");
+        System.out.println("[턴 체크] 올바르지 않는 턴");
         return false;
     }
     
@@ -90,9 +93,8 @@ public class Board {
         this.board.get(v).get(h).put("c", c);
     }
     
-    // 오목 판별
-    public boolean win(int stoneColor, Map<String, Integer> stoneLocation){    
-        int color;
+    // 오목(승리) 판별
+    public boolean win(int stoneColor, Map<String, Integer> stoneLocation){
         int x = stoneLocation.get("h"); //stone location = {h: 0, v: 0} 오목판의 좌표
         int y = stoneLocation.get("v");
         
@@ -131,10 +133,8 @@ public class Board {
         return false;
     }
     
-    // 33 판별
+    // 33금지 판별
     public boolean doubleThree(int stoneColor, Map<String, Integer> stoneLocation){
-
-        int color;
         int x = stoneLocation.get("h"); //stone location = {h: 0, v: 0} 오목판의 좌표
         int y = stoneLocation.get("v");
         

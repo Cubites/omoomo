@@ -71,7 +71,7 @@ public class RoomInfoServlet extends HttpServlet {
             map.get(num).setPeopleNum(map.get(num).getPeopleNum() + 1);
             sc.setAttribute("roomMap", map);
 
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/chatPage.jsp");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/gamePage.jsp");
             HttpSession httpSession = request.getSession();
             httpSession.setAttribute("roomNumber", num);
             httpSession.setAttribute("mode", mode);
