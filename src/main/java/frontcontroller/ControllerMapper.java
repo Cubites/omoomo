@@ -20,7 +20,6 @@ public class ControllerMapper {
 		
 		//url주소와 이를 처리할 컨트롤러 연결
 		mapper.put("/register.do", new RegisterController());
-		mapper.put("/register_check.do", new RegisterController());
 		mapper.put("/home.do", new HomeController());
 		mapper.put("/wroom.do", new WroomController());
 		mapper.put("/enterRoom.do", new EnterRoomController());

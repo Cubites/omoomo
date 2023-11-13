@@ -8,7 +8,8 @@
 <link href="signup_css.css" rel="stylesheet">
 <script src="http://code.jquery.com/jquery-latest.min.js"></script>
 <script type="text/javascript">
-	// 아이디 중복 확인
+
+	// 아이디 중복 확인 함수
 	function checkName() {
 		var _id = $("#t_id").val();
 		if (_id == '') {
@@ -24,42 +25,38 @@
 				id : _id
 			},
 			success : function(data, textStatus) {
-
+				// 정상적으로 통신이 이뤄졌을 때, 받아온 값 확인
 				if (data == 'usable') {
 					alert("사용할 수 있는 ID입니다.")
-					// $('#btnDuplicate').prop("disabled", true);
 				} else {
 					alert("사용할 수 없는 ID입니다. 다시 입력해주세요.")
 				}
 			},
 			error : function(data, textStatus) {
 				alert("에러가 발생했습니다.");
-				ㅣ
-			},
-			complete : function(data, textStatus) {
-				//alert("작업을완료 했습니다");
 			}
 		}); //end ajax	 
 	}
-
+	
+	// 비밀번호 확인 함수
 	function checkPw() {
 		console.log("1번", $("#pw_1").val())
 		console.log("2번", $("#pw_2").val())
+		
+		// 사용자가 입력한 두 비밀번호가 동일한지 확인
 		if (($("#pw_1").val()) != $("#pw_2").val()) {
-			//alert("비밀번호가 다릅니다. 다시 입력해주세요.")
 			$('#correct').hide();
 			$('#incorrect').show();
 			$('#btnRegister').prop("disabled", true);
 		} else {
-			//alert("비밀번호가 일치합니다.")
 			$('#correct').show();
 			$('#incorrect').hide();
 			$('#btnRegister').prop("disabled", false);
 		}
 	}
-
+	
+	// 돌아가기 버튼 클릭 시 홈으로 이동
 	function goHome() {
-		//location.href="<c:url value='/login.do'/>";
 		location.href = "/omoomo/home.do";
 	}
 </script>
@@ -70,6 +67,8 @@
 		<div id="wrapper">
 			<div id="signup_logo"></div>
 			<div id="signup_main">
+			
+				<!-- 아이디, 비밀번호 입력 후 register.do로 정보 보냄 -->
 				<form action="register.do" method="post" id="signup_form">
 					<div id="signup">회원가입</div>
 					<!-- 아이디 입력창 -->

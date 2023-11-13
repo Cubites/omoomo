@@ -34,7 +34,8 @@ public class WinAndLose extends HttpServlet {
 
     protected void dohandle(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+           
+        //이간사람과 진사람 받아서 입력하기
         UserDAO dao = new UserDAO();
         String username = request.getParameter("username");
         String result = request.getParameter("result");

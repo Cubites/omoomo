@@ -18,7 +18,8 @@
 
   <script type="text/javascript">
     $(function () {
-      /*----------------장원 시작(1)---------------*/
+      /*----------------장원 시작(1)--------------- */
+      
       ajaxLoginUser("${login_user_name}");
       ajaxList("");
       $("#searchInputbox > input").keyup(function () {
@@ -38,30 +39,30 @@
 
       /*----------------강태연 시작(1)---------------*/
       //방 만들기 버튼 클릭시 모달 팝업 띄우기
-      const modal = document.getElementById("modal")
-      const btnModal = document.getElementById("roomMakeButton")
-      btnModal.addEventListener("click", e => {
-        var roomCnt = $('.roomWrap').length;
-        if (roomCnt >= 8) {
+      const modal = document.getElementById("modal") //modal이라는 id의 element를 가져옴->가장 상위 요소
+      const btnModal = document.getElementById("roomMakeButton")//방만들기 버튼
+      btnModal.addEventListener("click", e => {//방만들기 버튼 누르면 실행될 이벤트
+        var roomCnt = $('.roomWrap').length;//방의 가장 상위 요소(.roomWrap)의 개수를 세서 현재 생성되어 있는 방의 개수를 가져옴
+        if (roomCnt >= 8) {//방의 개수가 8개 이상이면 방 생성 금지
           alert("더 이상 방을 생성할 수 없습니다.")
         } else {
-          modal.style.display = "flex"
+          modal.style.display = "flex"//8개 미만이면 방만들기 창 눌렀을 때, 모달창 display: none -> flex
         }
       })
 
 
       //모달 팝업에서 취소 클릭시 모달 팝업 없애기
-      const closeBtn = modal.querySelector("#closeBtn")
-      closeBtn.addEventListener("click", e => {
-        modal.style.display = "none"
+      const closeBtn = modal.querySelector("#closeBtn") //방만들기(모달팝업) 내부 취소 버튼
+      closeBtn.addEventListener("click", e => {//모달창 내에서 취소 버튼 누르면 실행될 이벤트
+        modal.style.display = "none"//모달창 display: flex -> none으로 안보이게
       })
 
-      //모달 팝업에서 확인 클릭시 방 정보 전송
-      $("#sendRoomInfo").on("click", function () {
-        var roomname = $("#input-roomname").val();
-        var mode = $('input[name="mode"]:checked').val();
+      //모달 팝업에서 확인 클릭시 방 정보 전송 -> roomVO로 방들의 정보를 업데이트하려고 보냄 
+      $("#sendRoomInfo").on("click", function () {//방만들기(모달팝업) 내부 확인 버튼 누르면 실행될 이벤트
+        var roomname = $("#input-roomname").val();//input으로 받은 방이름 
+        var mode = $('input[name="mode"]:checked').val();//선택된 라디오 버튼의 값
         $.ajax({
-          url: 'updateRoom.do',
+          url: 'updateRoom.do', 
           type: "post",
           data: {
             "roomname": roomname,
@@ -72,7 +73,7 @@
             console.log(mode)
             alert("방 정보 전송 완");
             location.reload(true);
-            modal.style.display = "none"
+            modal.style.display = "none" //모달창 안보이게
           },
           error: function (request, status, error) {
             alert("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
@@ -80,22 +81,23 @@
         });
       });
 
-      $(".roomWrap").on("click", function () {
-        var userCntTxt = $(this).find("#roomUserNumber").text().replace(" / 2", "");
-        var userCnt = parseInt(userCntTxt, 10);
+      $(".roomWrap").on("click", function () {//방 요소 중 하나가 클릭되면 실행될 이벤트
+        var userCntTxt = $(this).find("#roomUserNumber").text().replace(" / 2", ""); //방에 참가하고 있는 인원수를 방div에서 추출
+        var userCnt = parseInt(userCntTxt, 10);//10진수값으로 파싱
         console.log(userCnt);
         
-        if(userCnt==2){
+        if(userCnt==2){//화면에 표시된 참가자의 수가 2이면 입장하지 못하게 막음
             alert("입장할 수 없습니다.")
-        }else{
-          var num = $(this).find("#num").val();
-          var mode = $(this).find("#rules").data("value");
+        }else{//참가자가 2명보다 적다면 방에 입장가능 
+          var num = $(this).find("#num").val(); //방의 정보를 추출
+          var mode = $(this).find("#rules").data("value"); //div에서 특정 값을 가져오기 위해 dic에 data-value로 설정해놓음
           //var mode = $("#rules", this).data("value");
           
-          //추가 유저명 잘 들어감
+          //세션에 저장된 현재 로그인 된 유저의 이름을 가져옴
           var username="${login_user_name}";
           alert(username);
           console.log(mode + num);
+          //roomInfo로 Get방식으로 방의 번호, 입장하는 사용자의 이름을 전송
           location.href = "/omoomo/roomInfo?num=" + num + "&mode=" + mode+"&username="+username;
             
             
@@ -123,13 +125,16 @@
 
     /*----------------장원 시작(2)---------------*/
     function ajaxLoginUser(loginUser) {
-
+	
+     //post방식으로 ajax요청 로그인한 멤버 값 DB에서 가져옴
       $.ajax({
         type: 'post',
         url: "<c:url value='/getMemberList.do'/>",
+        //json으로 return받음
         dataType: 'JSON',
         data: { 'name': loginUser },
         success: function (result) {
+        	//return받은 json (result)에는 1개의 json객체가 들어 있음(배열) -> 배열접근을 통해 값 꺼내기
           console.log(result);
           $("#namebox").text(result[0].userName);
           $("#win").text(result[0].win);
@@ -140,6 +145,7 @@
         }
       });
     }
+    //랭킹 검색한 json불러오기
     function ajaxList(name) {
 
       $.ajax({
@@ -148,8 +154,12 @@
         dataType: 'JSON',
         data: { 'name': name },
         success: function (result) {
-
+		
+        
           $("#rakingshow").html("");
+          
+          //결과 알아보기 쉽게 member에 담음 
+         
           var member = result;
           var html = "";
           var idx;
@@ -158,6 +168,7 @@
           } else {
             idx = member.length
           }
+          //for문을 돌면서 이름과 rank를 출력 
           for (let i = 0; i < idx; i++) {
             html += "<tr class='rankfont'><td>" + member[i].userName + "</td>"
             html += "<td>" + member[i].rank + "등</td></tr>"
@@ -671,6 +682,7 @@
 
 <body>
   <div id="container">
+    <!--모달팝업 시작-->
     <div id="modal" class="modal-overlay">
       <div class="modal-window">
         <div class="modal-window-cover">
@@ -713,7 +725,7 @@
         </div>
       </div>
     </div>
-
+    <!--모달팝업 끝-->
 
     <!-- side -->
     <!--장원-->

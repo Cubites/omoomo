@@ -28,9 +28,9 @@ public class UserDAO {
         }
     }
 
+    // 회원 가입 메서드
     public void addMember(UserVO user) {
         try {
-
             String name = user.getUser_name();
             String pw = user.getUser_pw();
             String query = "INSERT INTO user_table" + " VALUES(user_seq.nextval, ?, ?, 0, 0, 0)";
@@ -48,13 +48,12 @@ public class UserDAO {
         }
     }
 
+    // DB에서 확인하는 메서드
     public boolean isExisted(UserVO user) {
         boolean result = false;
         String name = user.getUser_name();
         String pw = user.getUser_pw();
-
         try {
-
             String query = "select decode(count(*),1,'true','false') as result from user_table";
             query += " where user_name=? and user_pw=?";
             pstmt = con.prepareStatement(query);
@@ -72,10 +71,10 @@ public class UserDAO {
         return result;
     }
 
+    // 아이디 중복 확인 메서드
     public boolean overlappedID(String id) {
         boolean result = false;
         try {
-
             String query = "select decode(count(*),1,'true','false') as result from user_table";
             query += " where user_name=?";
             System.out.println("prepareStatememt: " + query);
@@ -91,13 +90,13 @@ public class UserDAO {
         } finally {
             resourceclose();
         }
-
         return result;
     }
-
+    //MemberList 불러오는 코드 
     public List<UserVO> MemberList(String username) {
         System.out.println("dao호출");
         List<UserVO> list = new ArrayList<>();
+        //rank_view에서 LIKE를 사용해서 이름을 체크 
         String sql = "select * from rank_view where user_name LIKE '%'||?||'%'";
         try {
 

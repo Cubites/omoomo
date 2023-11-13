@@ -16,6 +16,7 @@ public class UserVO {
 	private int user_score;
 	private int ranking;
 	
+	// 아이디랑 비번으로 회원가입하기 위해 필요한 생성자
 	public UserVO(String user_name, String user_pw) {
 		this.user_name = user_name;
 		this.user_pw = user_pw;
