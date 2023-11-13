@@ -3,6 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <% 
+// 파라미터에 보내온 값
 String result = request.getParameter("isLogOn");
 request.setAttribute("result", result);
 %>
@@ -21,6 +22,7 @@ request.setAttribute("result", result);
 			//location.href="<c:url value='/login.do'/>";
 			location.href="/omoomo/login.do";
 		}
+		// 로그인 실패 시
         if(<%=result%> == false) {
             alert("다시 로그인 해주세요.");
         }
@@ -33,6 +35,7 @@ request.setAttribute("result", result);
             <div id="first"></div>
             <div id="second">
 
+				<!-- 아이디, 비밀번호 입력 후 login.do로 정보 보냄 -->
                 <form method="post" action="login.do" encType="UTF-8" id="login_form">
                     <div id="name_pw">
                         <input type="text" name="user_name" id="user_name" placeholder="아이디를 입력하세요"><br>
