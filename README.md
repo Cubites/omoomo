@@ -56,7 +56,7 @@
     - 경기 승패 저장
     - 랭킹 표시 및 검색
 - 11/03(금)까지 피그마에 각자 생각하는 화면 디자인이나 구도 작성
-    - 링크: https://www.figma.com/file/6sm7MYRBKKIIccXnclDk76/Omok?type=design&mode=design&t=RTWyakm4AsoYa2MG-1
+    - 링크: [Omoomo 화면디자인](https://www.figma.com/file/6sm7MYRBKKIIccXnclDk76/Omok?type=design&mode=design&t=RTWyakm4AsoYa2MG-1)
 
 ## 2023.11.01 (수)
 
